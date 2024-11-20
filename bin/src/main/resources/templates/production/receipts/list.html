@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Receipts - Print Shop Inventory System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .table th, .table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        .table th { background-color: #f8f9fa; }
+        .btn {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .actions-container {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Receipts</h1>
+    
+    <div class="actions-container">
+        <!-- Both ADMIN and PRODUCTION can create receipts -->
+        <a th:href="@{/production/receipts/create}" class="btn">Create New Receipt</a>
+        <!-- Only ADMIN can import receipts -->
+        <a th:href="@{/production/receipts/import}" class="btn" sec:authorize="hasRole('ADMIN')">Import Receipt</a>
+    </div>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Receipt Number</th>
+                <th>Date</th>
+                <th>Supplier</th>
+                <th>Materials Count</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="receipt : ${receipts}">
+                <td th:text="${receipt.receiptNumber}"></td>
+                <td th:text="${#temporals.format(receipt.date, 'dd/MM/yyyy')}"></td>
+                <td th:text="${receipt.supplier}"></td>
+                <td th:text="${receipt.materials.size()}"></td>
+                <td>
+                    <a th:href="@{/production/receipts/{id}(id=${receipt.id})}" 
+                       class="btn">View</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

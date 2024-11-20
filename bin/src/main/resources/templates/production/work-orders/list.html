@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Work Orders - Print Shop Inventory System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .table th, .table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        .table th { background-color: #f8f9fa; }
+        .btn { 
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .btn-success { background-color: #28a745; }
+        .btn-warning { background-color: #ffc107; color: #000; }
+    </style>
+</head>
+<body>
+    <h1>Work Orders</h1>
+    
+    <a th:href="@{/production/work-orders/create}" class="btn">Create New Work Order</a>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Route Number</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Description</th>
+                <th>Required Weight</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="workOrder : ${workOrders}">
+                <td th:text="${workOrder.routeNumber}"></td>
+                <td th:text="${workOrder.customerNumber}"></td>
+                <td th:text="${workOrder.productNumber}"></td>
+                <td th:text="${workOrder.description}"></td>
+                <td th:text="${workOrder.requiredWeight}"></td>
+                <td th:text="${workOrder.status}"></td>
+                <td>
+                    <a th:href="@{/production/work-orders/{id}(id=${workOrder.id})}" 
+                       class="btn btn-warning">View</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

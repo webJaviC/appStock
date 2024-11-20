@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Warehouse Inventory - Print Shop Inventory System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .filters { 
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .filters input, .filters select {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .table { 
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .table th, .table td { 
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .table th { 
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+        .status-available { color: #28a745; }
+        .status-assigned { color: #ffc107; }
+        .status-depleted { color: #dc3545; }
+    </style>
+</head>
+<body>
+    <h1>Warehouse Inventory</h1>
+    
+    <div class="filters">
+        <input type="text" id="codeFilter" placeholder="Filter by code">
+        <select id="qualityFilter">
+            <option value="">All Qualities</option>
+            <option th:each="quality : ${qualities}"
+                    th:value="${quality.name}"
+                    th:text="${quality.name}"></option>
+        </select>
+        <select id="weightFilter">
+            <option value="">All Weights</option>
+            <option th:each="weight : ${weights}"
+                    th:value="${weight.name}"
+                    th:text="${weight.name}"></option>
+        </select>
+    </div>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Quality</th>
+                <th>Weight</th>
+                <th>Gross Weight</th>
+                <th>Net Weight</th>
+                <th>Dimensions</th>
+                <th>Location</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="material : ${materials}">
+                <td th:text="${material.code}"></td>
+                <td th:text="${material.quality.name}"></td>
+                <td th:text="${material.weight.name}"></td>
+                <td th:text="${material.grossWeight + ' kg'}"></td>
+                <td th:text="${material.netWeight + ' kg'}"></td>
+                <td th:text="${material.width + ' x ' + material.length + ' cm'}"></td>
+                <td th:text="${material.location}"></td>
+                <td th:class="${material.assigned ? 'status-assigned' : 'status-available'}"
+                    th:text="${material.assigned ? 'Assigned' : 'Available'}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        document.getElementById('codeFilter').addEventListener('input', filterTable);
+        document.getElementById('qualityFilter').addEventListener('change', filterTable);
+        document.getElementById('weightFilter').addEventListener('change', filterTable);
+
+        function filterTable() {
+            const code = document.getElementById('codeFilter').value.toLowerCase();
+            const quality = document.getElementById('qualityFilter').value.toLowerCase();
+            const weight = document.getElementById('weightFilter').value.toLowerCase();
+            
+            const rows = document.querySelectorAll('.table tbody tr');
+            
+            rows.forEach(row => {
+                const materialCode = row.cells[0].textContent.toLowerCase();
+                const materialQuality = row.cells[1].textContent.toLowerCase();
+                const materialWeight = row.cells[2].textContent.toLowerCase();
+                
+                const matchesCode = materialCode.includes(code);
+                const matchesQuality = quality === '' || materialQuality === quality;
+                const matchesWeight = weight === '' || materialWeight === weight;
+                
+                row.style.display = matchesCode && matchesQuality && matchesWeight ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Work Order - Print Shop Inventory System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input, select { 
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Create Work Order</h1>
+    
+    <form th:action="@{/production/work-orders/create}" th:object="${workOrder}" method="post">
+        <div class="form-group">
+            <label for="routeNumber">Route Number:</label>
+            <input type="text" id="routeNumber" th:field="*{routeNumber}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="customerNumber">Customer Number:</label>
+            <input type="text" id="customerNumber" th:field="*{customerNumber}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="productNumber">Product Number:</label>
+            <input type="text" id="productNumber" th:field="*{productNumber}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <input type="text" id="description" th:field="*{description}">
+        </div>
+        
+        <div class="form-group">
+            <label for="requiredWeight">Required Weight (kg):</label>
+            <input type="number" id="requiredWeight" th:field="*{requiredWeight}" step="0.01" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="width">Width (cm):</label>
+            <input type="number" id="width" th:field="*{width}" step="0.1" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="length">Length (cm):</label>
+            <input type="number" id="length" th:field="*{length}" step="0.1" required>
+        </div>
+        
+        <button type="submit" class="btn">Create Work Order</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Work Order Details - Warehouse</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .details { 
+            margin-bottom: 30px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 4px;
+        }
+        .details dt { font-weight: bold; margin-top: 10px; }
+        .details dd { margin-left: 0; margin-bottom: 5px; }
+        .table { 
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .table th, .table td { 
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .table th { background-color: #f8f9fa; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input, select { 
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .btn {
+            padding: 10px 20px;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn-primary { background-color: #007bff; }
+        .btn-danger { background-color: #dc3545; }
+        .scanner-container {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            text-align: center;
+        }
+        #reader {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .scanner-options {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        #scannerStatus {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .actions-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Work Order Details</h1>
+    
+    <div class="details">
+        <dl>
+            <dt>Route Number:</dt>
+            <dd th:text="${workOrder.routeNumber}"></dd>
+            
+            <dt>Customer Number:</dt>
+            <dd th:text="${workOrder.customerNumber}"></dd>
+            
+            <dt>Product Number:</dt>
+            <dd th:text="${workOrder.productNumber}"></dd>
+            
+            <dt>Required Weight:</dt>
+            <dd th:text="${workOrder.requiredWeight + ' kg'}"></dd>
+            
+            <dt>Dimensions:</dt>
+            <dd th:text="${workOrder.width + ' x ' + workOrder.length + ' cm'}"></dd>
+        </dl>
+    </div>
+
+    <div th:if="${workOrder.status == T(com.printshop.model.WorkOrderStatus).OPEN}" class="scanner-container">
+        <h3>Scan Material Barcode</h3>
+        
+        <div class="scanner-options">
+            <button class="btn btn-primary" onclick="startCameraScanner()">Use Camera Scanner</button>
+            <button class="btn btn-primary" onclick="focusManualInput()">Manual Input</button>
+        </div>
+
+        <div id="reader" style="display: none;"></div>
+        
+        <div class="input-group">
+            <input type="text" id="barcodeInput" placeholder="Scan with barcode reader or enter code manually"
+                   onkeypress="handleBarcodeInput(event)">
+        </div>
+
+        <div id="scannerStatus"></div>
+    </div>
+    
+    <h2>Assigned Materials</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Material Code</th>
+                <th>Quality</th>
+                <th>Weight</th>
+                <th>Original Net Weight</th>
+                <th>Updated Net Weight</th>
+                <th>Assignment Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="assignment : ${workOrder.materialAssignments}">
+                <td th:text="${assignment.orderNumber}"></td>
+                <td th:text="${assignment.material.code}"></td>
+                <td th:text="${assignment.material.quality.name}"></td>
+                <td th:text="${assignment.material.weight.name}"></td>
+                <td th:text="${assignment.material.netWeight + ' kg'}"></td>
+                <td th:text="${assignment.updatedNetWeight + ' kg'}"></td>
+                <td th:text="${#temporals.format(assignment.assignmentDate, 'dd/MM/yyyy HH:mm')}"></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="actions-container" th:if="${workOrder.status == T(com.printshop.model.WorkOrderStatus).OPEN}">
+        <div class="material-form">
+            <h3>Assign Material</h3>
+            <form id="assignForm" th:action="@{/warehouse/work-orders/{id}/assign-material(id=${workOrder.id})}" method="post">
+                <div class="form-group">
+                    <label for="materialCode">Material Code:</label>
+                    <input type="text" id="materialCode" name="materialCode" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="orderNumber">Order Number:</label>
+                    <input type="number" id="orderNumber" name="orderNumber" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="updatedNetWeight">Updated Net Weight (kg):</label>
+                    <input type="number" id="updatedNetWeight" name="updatedNetWeight" 
+                           step="0.01" placeholder="Leave empty to use original weight">
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Assign Material</button>
+            </form>
+        </div>
+        
+        <div class="close-form">
+            <form th:action="@{/warehouse/work-orders/{id}/close(id=${workOrder.id})}" method="post">
+                <button type="submit" class="btn btn-danger" 
+                        onclick="return confirm('Are you sure you want to close this work order? This action cannot be undone.')">
+                    Close Work Order
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let html5QrcodeScanner = null;
+
+        function showStatus(message, isError = false) {
+            const statusDiv = document.getElementById('scannerStatus');
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
+            statusDiv.className = isError ? 'status-error' : 'status-success';
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        function handleBarcodeInput(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const code = document.getElementById('barcodeInput').value;
+                processScannedCode(code);
+            }
+        }
+
+        function processScannedCode(code) {
+            if (code && code.trim()) {
+                document.getElementById('materialCode').value = code.trim();
+                document.getElementById('barcodeInput').value = '';
+                showStatus('Code scanned successfully: ' + code);
+                
+                // Focus on order number if empty
+                const orderNumberInput = document.getElementById('orderNumber');
+                if (!orderNumberInput.value) {
+                    orderNumberInput.focus();
+                }
+            }
+        }
+
+        function startCameraScanner() {
+            const reader = document.getElementById('reader');
+            reader.style.display = 'block';
+            document.getElementById('barcodeInput').style.display = 'none';
+
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+            }
+
+            html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader", 
+                { 
+                    fps: 10,
+                    qrbox: { width: 250, height: 250 },
+                    aspectRatio: 1.0
+                }
+            );
+
+            html5QrcodeScanner.render((decodedText) => {
+                processScannedCode(decodedText);
+                html5QrcodeScanner.clear();
+                reader.style.display = 'none';
+                document.getElementById('barcodeInput').style.display = 'block';
+            });
+        }
+
+        function focusManualInput() {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+                document.getElementById('reader').style.display = 'none';
+            }
+            document.getElementById('barcodeInput').style.display = 'block';
+            document.getElementById('barcodeInput').focus();
+        }
+
+        // Handle physical barcode scanner input
+        document.addEventListener('DOMContentLoaded', () => {
+            let barcodeBuffer = '';
+            let lastKeyTime = 0;
+            const BARCODE_DELAY = 20; // Max delay between characters for barcode scanner
+
+            document.addEventListener('keypress', (e) => {
+                const currentTime = new Date().getTime();
+                
+                if (currentTime - lastKeyTime > BARCODE_DELAY) {
+                    barcodeBuffer = '';
+                }
+                
+                if (e.key !== 'Enter') {
+                    barcodeBuffer += e.key;
+                } else if (barcodeBuffer) {
+                    processScannedCode(barcodeBuffer);
+                    barcodeBuffer = '';
+                }
+                
+                lastKeyTime = currentTime;
+            });
+        });
+    </script>
+</body>
+</html>

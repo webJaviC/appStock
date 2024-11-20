@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>View Receipt - Print Shop Inventory System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .details { margin-bottom: 30px; }
+        .details dt { font-weight: bold; margin-top: 10px; }
+        .details dd { margin-left: 0; margin-bottom: 5px; }
+        .table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .table th, .table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        .table th { background-color: #f8f9fa; }
+        .form-container {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Receipt Details</h1>
+    
+    <dl class="details">
+        <dt>Receipt Number:</dt>
+        <dd th:text="${receipt.receiptNumber}"></dd>
+        
+        <dt>Date:</dt>
+        <dd th:text="${#temporals.format(receipt.date, 'dd/MM/yyyy')}"></dd>
+        
+        <dt>Supplier:</dt>
+        <dd th:text="${receipt.supplier}"></dd>
+    </dl>
+    
+    <h2>Materials</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Quality</th>
+                <th>Weight</th>
+                <th>Gross Weight</th>
+                <th>Net Weight</th>
+                <th>Dimensions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="material : ${receipt.materials}">
+                <td th:text="${material.code}"></td>
+                <td th:text="${material.quality.name}"></td>
+                <td th:text="${material.weight.name}"></td>
+                <td th:text="${material.grossWeight}"></td>
+                <td th:text="${material.netWeight}"></td>
+                <td th:text="${material.width + ' x ' + material.length}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="form-container">
+        <h3>Add New Material</h3>
+        <form th:action="@{/production/receipts/{id}/materials/add(id=${receipt.id})}" method="post">
+            <div class="form-group">
+                <label for="code">Material Code:</label>
+                <input type="text" id="code" name="code" required>
+            </div>
+
+            <div class="form-group">
+                <label for="qualityId">Quality:</label>
+                <select id="qualityId" name="qualityId" required>
+                    <option value="">Select Quality</option>
+                    <option th:each="quality : ${qualities}"
+                            th:value="${quality.id}"
+                            th:text="${quality.name}"></option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="weightId">Weight:</label>
+                <select id="weightId" name="weightId" required>
+                    <option value="">Select Weight</option>
+                    <option th:each="weight : ${weights}"
+                            th:value="${weight.id}"
+                            th:text="${weight.name}"></option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="grossWeight">Gross Weight (kg):</label>
+                <input type="number" id="grossWeight" name="grossWeight" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="netWeight">Net Weight (kg):</label>
+                <input type="number" id="netWeight" name="netWeight" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="width">Width (cm):</label>
+                <input type="number" id="width" name="width" step="0.1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="length">Length (cm):</label>
+                <input type="number" id="length" name="length" step="0.1" required>
+            </div>
+
+            <button type="submit" class="btn">Add Material</button>
+        </form>
+    </div>
+</body>
+</html>

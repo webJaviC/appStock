@@ -1,0 +1,89 @@
+<!-- src/main/resources/templates/production/work-orders/closed-detail.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Closed Work Order Details - Print Shop Inventory System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .details { 
+            margin-bottom: 30px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 4px;
+        }
+        .details dt { font-weight: bold; margin-top: 10px; }
+        .details dd { margin-left: 0; margin-bottom: 5px; }
+        .table { 
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .table th, .table td { 
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .table th { background-color: #f8f9fa; }
+        .btn {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .back-link {
+            margin-bottom: 20px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <a href="/production/work-orders/closed" class="back-link btn">← Back to Closed Work Orders</a>
+
+    <div class="details">
+        <h2>Work Order Details</h2>
+        <dl>
+            <dt>Route Number:</dt>
+            <dd th:text="${workOrder.routeNumber}"></dd>
+            <dt>Customer Number:</dt>
+            <dd th:text="${workOrder.customerNumber}"></dd>
+            <dt>Product Number:</dt>
+            <dd th:text="${workOrder.productNumber}"></dd>
+            <dt>Required Weight:</dt>
+            <dd th:text="${workOrder.requiredWeight + ' kg'}"></dd>
+            <dt>Close Date:</dt>
+            <dd th:text="${#temporals.format(workOrder.date, 'dd/MM/yyyy')}"></dd>
+        </dl>
+    </div>
+
+    <h3>Used Materials</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Material Code</th>
+                <th>Quality</th>
+                <th>Weight</th>
+                <th>Original Net Weight</th>
+                <th>Used Net Weight</th>
+                <th>Assignment Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="assignment : ${workOrder.materialAssignments}">
+                <td th:text="${assignment.orderNumber}"></td>
+                <td th:text="${assignment.material.code}"></td>
+                <td th:text="${assignment.material.quality.name}"></td>
+                <td th:text="${assignment.material.weight.name}"></td>
+                <td th:text="${assignment.material.netWeight + ' kg'}"></td>
+                <td th:text="${assignment.updatedNetWeight + ' kg'}"></td>
+                <td th:text="${#temporals.format(assignment.assignmentDate, 'dd/MM/yyyy HH:mm')}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

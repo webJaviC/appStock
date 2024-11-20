@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .menu-item {
+            display: block;
+            padding: 10px;
+            color: #34495e;
+            text-decoration: none;
+            margin-bottom: 5px;
+        }
+        .menu-item:hover {
+            background-color: #f0f3f6;
+        }
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>Admin Dashboard</h1>
+            <div>Welcome, <span th:text="${#authentication.name}"></span></div>
+        </div>
+        <a href="/logout" class="logout-btn">Logout</a>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="card">
+            <h3>User Management</h3>
+            <a href="/admin/users" class="menu-item">Manage Users</a>
+            <a href="/admin/users/create" class="menu-item">Create New User</a>
+        </div>
+        
+        <div class="card">
+            <h3>Work Orders</h3>
+            <a href="/production/work-orders" class="menu-item">View Work Orders</a>
+            <a href="/production/work-orders/create" class="menu-item">Create Work Order</a>
+        </div>
+
+        <div class="card">
+            <h3>Inventory Management</h3>
+            <a href="/warehouse/inventory" class="menu-item">View Inventory</a>
+            <a href="/warehouse/inventory/manage" class="menu-item">Manage Inventory</a>
+        </div>
+    </div>
+</body>
+</html>

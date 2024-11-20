@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Import Receipt - Print Shop Inventory System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .import-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input[type="file"] { 
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .alert {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        .file-format {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="import-container">
+        <h1>Import Receipt from File</h1>
+        
+        <div th:if="${error}" class="alert" th:text="${error}"></div>
+        
+        <div class="file-format">
+            <h3>Expected File Format:</h3>
+            <p>Each line should follow this format:</p>
+            <code>P0001915057029001900120000400200700082500000001MPCAPLI072532   00000006690000000011000000068300000000010000000000000000000000000000010000112115000007606826/06/2024</code>
+            <p>Where:</p>
+            <ul>
+                <li>Material Code: positions 2-11</li>
+                <li>Length: positions 30-32</li>
+                <li>Width: positions 33-35</li>
+                <li>Net Weight: positions 68-70</li>
+                <li>Gross Weight: positions 77-79</li>
+                <li>Quality: positions 86-88</li>
+                <li>Receipt Number: positions 117-124</li>
+                <li>Date: positions 125-132</li>
+            </ul>
+        </div>
+        
+        <form th:action="@{/production/receipts/import}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file">Select Receipt File:</label>
+                <input type="file" id="file" name="file" accept=".txt" required>
+            </div>
+            
+            <button type="submit" class="btn">Import Receipt</button>
+        </form>
+    </div>
+</body>
+</html>

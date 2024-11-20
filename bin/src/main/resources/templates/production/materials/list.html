@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Materials - Print Shop Inventory System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .table th, .table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        .table th { background-color: #f8f9fa; }
+        .btn {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Materials</h1>
+    
+    <a th:href="@{/production/materials/create}" class="btn">Add New Material</a>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Quality</th>
+                <th>Weight</th>
+                <th>Gross Weight</th>
+                <th>Net Weight</th>
+                <th>Dimensions</th>
+                <th>Receipt</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="material : ${materials}">
+                <td th:text="${material.code}"></td>
+                <td th:text="${material.quality.name}"></td>
+                <td th:text="${material.weight.name}"></td>
+                <td th:text="${material.grossWeight}"></td>
+                <td th:text="${material.netWeight}"></td>
+                <td th:text="${material.width + ' x ' + material.length}"></td>
+                <td th:text="${material.receipt?.receiptNumber}"></td>
+                <td>
+                    <a th:href="@{/production/materials/{id}/edit(id=${material.id})}" 
+                       class="btn">Edit</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Work Orders - Warehouse</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .table { 
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .table th, .table td { 
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .table th { 
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+        .btn {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .status-open { color: #28a745; }
+        .status-closed { color: #dc3545; }
+    </style>
+</head>
+<body>
+    <h1>Active Work Orders</h1>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Route Number</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Required Weight</th>
+                <th>Assigned Materials</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="workOrder : ${workOrders}">
+                <td th:text="${workOrder.routeNumber}"></td>
+                <td th:text="${workOrder.customerNumber}"></td>
+                <td th:text="${workOrder.productNumber}"></td>
+                <td th:text="${workOrder.requiredWeight + ' kg'}"></td>
+                <td th:text="${workOrder.materialAssignments.size()}"></td>
+                <td th:class="${workOrder.status == T(com.printshop.model.WorkOrderStatus).OPEN ? 'status-open' : 'status-closed'}"
+                    th:text="${workOrder.status}"></td>
+                <td>
+                    <a th:if="${workOrder.status == T(com.printshop.model.WorkOrderStatus).OPEN}"
+                       th:href="@{/warehouse/work-orders/{id}(id=${workOrder.id})}" 
+                       class="btn">Assign Materials</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
