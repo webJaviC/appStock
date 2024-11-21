@@ -1,5 +1,6 @@
 package com.printshop.controller;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -7,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
+import com.printshop.model.Material;
 import com.printshop.dto.MaterialScanResponse;
 import com.printshop.service.InventoryUpdateService;
 import com.printshop.service.MaterialService;
@@ -26,12 +27,21 @@ public class InventoryController {
 		this.inventoryUpdateService = inventoryUpdateService;
 	}
 
-	@GetMapping
+    @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'PRODUCTION', 'WAREHOUSE')")
     public String viewInventory(Model model) {
-        model.addAttribute("materials", materialService.findAll());
+        List<Material> materials = materialService.findAll();
+        
+        // Calculate total available net weight
+        double totalAvailableWeight = materials.stream()
+            .filter(m -> m.getStatus() == Material.MaterialStatus.AVAILABLE)
+            .mapToDouble(Material::getNetWeight)
+            .sum();
+
+        model.addAttribute("materials", materials);
         model.addAttribute("qualities", materialService.getAllQualities());
         model.addAttribute("weights", materialService.getAllWeights());
+        model.addAttribute("totalAvailableWeight", totalAvailableWeight);
         return "warehouse/inventory";
     }
 

@@ -5,6 +5,13 @@ import com.printshop.service.WorkOrderService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import com.printshop.dto.ReceiptMaterialSummary;
+
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import com.printshop.model.MaterialAssignment;
+import com.printshop.model.Receipt;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 @Controller
@@ -58,11 +65,38 @@ public class WorkOrderController {
         return "production/work-orders/closed-list";
     }
 
-    @GetMapping("/closed/{id}")
+   /* @GetMapping("/closed/{id}")
     public String viewClosedWorkOrder(@PathVariable Long id, Model model) {
         WorkOrder workOrder = workOrderService.findById(id)
             .orElseThrow(() -> new RuntimeException("Work order not found"));
         model.addAttribute("workOrder", workOrder);
+        return "production/work-orders/closed-detail";
+    }*/
+    
+    @GetMapping("/closed/{id}")
+    public String viewClosedWorkOrder(@PathVariable Long id, Model model) {
+        WorkOrder workOrder = workOrderService.findById(id)
+            .orElseThrow(() -> new RuntimeException("Work order not found"));
+
+        // Group assignments by receipt
+        Map<Receipt, ReceiptMaterialSummary> materialsByReceipt = workOrder.getMaterialAssignments().stream()
+            .collect(Collectors.groupingBy(
+                assignment -> assignment.getMaterial().getReceipt(),
+                Collectors.collectingAndThen(
+                    Collectors.toList(),
+                    ReceiptMaterialSummary::new
+                )
+            ));
+
+        // Calculate total weight used
+        double totalWeightUsed = workOrder.getMaterialAssignments().stream()
+            .mapToDouble(MaterialAssignment::getUpdatedNetWeight)
+            .sum();
+
+        model.addAttribute("workOrder", workOrder);
+        model.addAttribute("materialsByReceipt", materialsByReceipt);
+        model.addAttribute("totalWeightUsed", totalWeightUsed);
+
         return "production/work-orders/closed-detail";
     }
 

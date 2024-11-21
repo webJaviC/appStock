@@ -40,6 +40,9 @@ public class Material {
     
     @OneToMany(mappedBy = "material")
     private Set<MaterialAssignment> assignments;
+    
+    @OneToMany(mappedBy = "material", fetch = FetchType.LAZY)
+    private Set<MaterialAssignment> assig;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -191,4 +194,11 @@ public class Material {
 	        status = MaterialStatus.AVAILABLE;
 	    }
 	}
+	
+	  public MaterialAssignment getCurrentAssignment() {
+	        if (assig != null && !assig.isEmpty()) {
+	            return assig.iterator().next();
+	        }
+	        return null;
+	    }
 }

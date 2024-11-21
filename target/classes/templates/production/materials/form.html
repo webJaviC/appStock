@@ -28,6 +28,7 @@
 <body>
     <h1 th:text="${material.id == null ? 'Add New Material' : 'Edit Material'}"></h1>
     
+
     <form th:action="@{${material.id == null ? '/production/materials/create' : '/production/materials/' + material.id + '/edit'}}"
           th:object="${material}" method="post">
         
