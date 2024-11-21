@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Used Materials - Print Shop Inventory System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background-color: #f5f5f5;
+        }
+        .filters { 
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .filters input, .filters select {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .table-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .table { 
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .table th, .table td { 
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .table th { 
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            color: #2c3e50;
+        }
+        .export-btn {
+            padding: 8px 16px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .export-btn:hover {
+            background-color: #218838;
+        }
+        .date-range {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .search-box input {
+            flex: 1;
+        }
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Materiales Usados Historicos</h1>
+       <!-- <a href="/warehouse/used-materials/export" class="export-btn">Export to Excel</a>-->
+    </div>
+    
+    <div class="filters">
+        <div class="search-box">
+            <input type="text" id="searchOriginalCode" placeholder="Filtrar por Codigo Original">
+         <!--   <input type="text" id="searchUsedCode" placeholder="Search by used code">-->
+        </div>
+        
+        <div class="filter-group">
+            <div class="date-range">
+                <label>Desde:</label>
+                <input type="date" id="dateFrom">
+                <label>Hasta:</label>
+                <input type="date" id="dateTo">
+            </div>
+            
+            <select id="qualityFilter">
+                <option value="">Filtro por Calidad</option>
+                <option th:each="quality : ${qualities}"
+                        th:value="${quality.name}"
+                        th:text="${quality.name}"></option>
+            </select>
+            
+            <select id="weightFilter">
+                <option value="">Filtro por Gramaje</option>
+                <option th:each="weight : ${weights}"
+                        th:value="${weight.name}"
+                        th:text="${weight.name}"></option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Codigo Original</th>
+                    <th>Codigo Usado</th>
+                    <th>Calidad</th>
+                    <th>Gramaje</th>
+                    <th>KG Netos</th>
+                    <th>Dimensiones</th>
+                    <th>Hoja de Ruta</th>
+                    <th>Fecha de Uso</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${usedMaterials.empty}">
+                    <td colspan="8" class="no-results">No se encontraron materiales usados</td>
+                </tr>
+                <tr th:each="material : ${usedMaterials}">
+                    <td th:text="${material.originalCode}"></td>
+                    <td th:text="${material.usedCode}"></td>
+                    <td th:text="${material.quality.name}"></td>
+                    <td th:text="${material.weight.name}"></td>
+                    <td th:text="${material.netWeight + ' kg'}"></td>
+                    <td th:text="${material.width + ' x ' + material.length + ' cm'}"></td>
+                    <td th:text="${material.workOrder.routeNumber}"></td>
+                    <td th:text="${#temporals.format(material.usedDate, 'dd/MM/yyyy HH:mm')}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function applyFilters() {
+            const searchOriginalCode = document.getElementById('searchOriginalCode').value.toLowerCase();
+            const searchUsedCode = document.getElementById('searchUsedCode').value.toLowerCase();
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            const quality = document.getElementById('qualityFilter').value.toLowerCase();
+            const weight = document.getElementById('weightFilter').value.toLowerCase();
+            
+            const rows = document.querySelectorAll('.table tbody tr');
+            
+            rows.forEach(row => {
+                if (row.cells.length === 1) return; // Skip the "No results" row
+                
+                const originalCode = row.cells[0].textContent.toLowerCase();
+                const usedCode = row.cells[1].textContent.toLowerCase();
+                const materialQuality = row.cells[2].textContent.toLowerCase();
+                const materialWeight = row.cells[3].textContent.toLowerCase();
+                const usedDate = new Date(row.cells[7].textContent);
+                
+                const matchesOriginalCode = originalCode.includes(searchOriginalCode);
+                const matchesUsedCode = usedCode.includes(searchUsedCode);
+                const matchesQuality = quality === '' || materialQuality === quality;
+                const matchesWeight = weight === '' || materialWeight === weight;
+                
+                let matchesDate = true;
+                if (dateFrom && dateTo) {
+                    const fromDate = new Date(dateFrom);
+                    const toDate = new Date(dateTo);
+                    matchesDate = usedDate >= fromDate && usedDate <= toDate;
+                }
+                
+                row.style.display = 
+                    matchesOriginalCode && 
+                    matchesUsedCode && 
+                    matchesQuality && 
+                    matchesWeight && 
+                    matchesDate ? '' : 'none';
+            });
+        }
+
+        // Add event listeners to all filter inputs
+        document.getElementById('searchOriginalCode').addEventListener('input', applyFilters);
+        document.getElementById('searchUsedCode').addEventListener('input', applyFilters);
+        document.getElementById('dateFrom').addEventListener('change', applyFilters);
+        document.getElementById('dateTo').addEventListener('change', applyFilters);
+        document.getElementById('qualityFilter').addEventListener('change', applyFilters);
+        document.getElementById('weightFilter').addEventListener('change', applyFilters);
+    </script>
+</body>
+</html>
