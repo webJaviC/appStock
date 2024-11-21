@@ -106,18 +106,18 @@
 
 <body>
 	<div class="header-actions">
-		<h1>Warehouse Inventory</h1>
+		<h1>Inventario</h1>
 
 	</div>
 
 	<div class="summary-panel">
 		<div class="weight-total">
-			<span class="weight-label">Total Net Weight (Available):</span>
+			<span class="weight-label">Total KG Netos (Disponibles):</span>
 			<span id="totalNetWeight" th:text="${#numbers.formatDecimal(totalAvailableWeight, 1, 2) + ' kg'}">0
 				kg</span>
 		</div>
 		<div class="weight-total">
-			<span class="weight-label">Filtered Net Weight:</span>
+			<span class="weight-label">KG Netos Filtrados:</span>
 			<span id="filteredNetWeight">0 kg</span>
 		</div>
 	</div>
@@ -125,31 +125,31 @@
 	<div class="filters">
 		<input type="text" id="codeFilter" placeholder="Filter by code">
 		<select id="qualityFilter">
-			<option value="">All Qualities</option>
+			<option value="">Filtrar por Calidades</option>
 			<option th:each="quality : ${qualities}" th:value="${quality.name}" th:text="${quality.name}"></option>
 		</select>
 		<select id="weightFilter">
-			<option value="">All Weights</option>
+			<option value="">Filtrar por Gramaje</option>
 			<option th:each="weight : ${weights}" th:value="${weight.name}" th:text="${weight.name}"></option>
 		</select>
 		<select id="statusFilter">
-			<option value="">All Statuses</option>
-			<option value="AVAILABLE">Available</option>
-			<option value="RESERVED">Reserved</option>
-			<option value="USED">Used</option>
+			<option value="">Filtrar por Estado</option>
+			<option value="AVAILABLE">Disponible</option>
+			<option value="RESERVED">Reservado</option>
+			<option value="USED">Usado</option>
 		</select>
 	</div>
 
 	<table class="table">
 		<thead>
 			<tr>
-				<th>Code</th>
-				<th>Quality</th>
-				<th>Weight</th>
-				<th>Gross Weight</th>
-				<th>Net Weight</th>
-				<th>Dimensions</th>
-				<th>Status</th>
+				<th>Codigo</th>
+				<th>Calidad</th>
+				<th>Gramaje</th>
+				<th>KG Brutos</th>
+				<th>KG Netos</th>
+				<th>Dimensiones</th>
+				<th>Estado</th>
 			</tr>
 		</thead>
 		<tbody>
