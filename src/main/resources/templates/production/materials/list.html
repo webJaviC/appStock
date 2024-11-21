@@ -20,21 +20,21 @@
     </style>
 </head>
 <body>
-    <h1>Materials</h1>
+    <h1>Materiales</h1>
     
-    <a th:href="@{/production/materials/create}" class="btn">Add New Material</a>
+    <a th:href="@{/production/materials/create}" class="btn">Agregar Nuevo Material</a>
     
     <table class="table">
         <thead>
             <tr>
-                <th>Code</th>
-                <th>Quality</th>
-                <th>Weight</th>
-                <th>Gross Weight</th>
-                <th>Net Weight</th>
-                <th>Dimensions</th>
-                <th>Receipt</th>
-                <th>Actions</th>
+                <th>Codigo</th>
+                <th>Calidad</th>
+                <th>Gramaje</th>
+                <th>KG Brutos</th>
+                <th>KG Netos</th>
+                <th>Dimensiones</th>
+                <th>Remito</th>
+                <th>Estado</th>
             </tr>
         </thead>
         <tbody>
@@ -48,7 +48,7 @@
                 <td th:text="${material.receipt?.receiptNumber}"></td>
                 <td>
                     <a th:href="@{/production/materials/{id}/edit(id=${material.id})}" 
-                       class="btn">Edit</a>
+                       class="btn">Editar</a>
                 </td>
             </tr>
         </tbody>

@@ -18,6 +18,7 @@ import java.util.Map;
 @PreAuthorize("hasRole('WAREHOUSE')")
 public class WarehouseController {
     private final WorkOrderService workOrderService;
+    
 
     public WarehouseController(WorkOrderService workOrderService) {
         this.workOrderService = workOrderService;

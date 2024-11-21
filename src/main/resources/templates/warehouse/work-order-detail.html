@@ -113,15 +113,15 @@
 
     <div class="details">
         <dl>
-            <dt>Route Number:</dt>
+            <dt>Numero:</dt>
             <dd th:text="${workOrder.routeNumber}"></dd>
-            <dt>Customer Number:</dt>
+            <dt>Cod. Cliente:</dt>
             <dd th:text="${workOrder.customerNumber}"></dd>
-            <dt>Product Number:</dt>
+            <dt>Cod. Producto:</dt>
             <dd th:text="${workOrder.productNumber}"></dd>
-            <dt>Required Weight:</dt>
+            <dt>KG Requeridos:</dt>
             <dd th:text="${workOrder.requiredWeight + ' kg'}"></dd>
-            <dt>Status:</dt>
+            <dt>Estado:</dt>
             <dd th:text="${workOrder.status}"></dd>
         </dl>
     </div>
@@ -130,10 +130,10 @@
     <h3>Scan Material</h3>
     <div class="scanner-options">
         <button id="cameraButton" class="btn btn-primary" onclick="startCameraScanner()" style="display: none;">
-            Use Camera
+            Usar Camara
         </button>
         <button id="manualButton" class="btn btn-primary" onclick="focusManualInput()">
-            Manual Input
+           Ingreso Manual
         </button>
     </div>
     <div id="reader" style="display: none;"></div>
@@ -142,15 +142,15 @@
     <div id="scannerStatus"></div>
 </div>
 
-    <h2>Assigned Materials</h2>
+    <h2>Asignar Material</h2>
     <table class="table">
         <thead>
             <tr>
-                <th>Material Code</th>
-                <th>Quality</th>
-                <th>Weight</th>
-                <th>Net Weight</th>
-                <th>Order #</th>
+                <th>Codigo</th>
+                <th>Calidad</th>
+                <th>Gramaje</th>
+                <th>KG Netos</th>
+                <th>Orden #</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -178,11 +178,11 @@
                 <td class="assignment-actions">
                     <button th:if="${!assignment.ordered}" class="btn btn-success"
                             th:onclick="'saveAssignment(' + ${assignment.id} + ')'">
-                        Save
+                        Guardar
                     </button>
                     <button th:if="${!assignment.ordered}" class="btn btn-danger"
                             th:onclick="'removeAssignment(' + ${assignment.id} + ')'">
-                        Remove
+                        Remover
                     </button>
                 </td>
             </tr>

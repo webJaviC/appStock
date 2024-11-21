@@ -47,29 +47,29 @@
     </style>
 </head>
 <body>
-    <h1>Receipt Details</h1>
+    <h1>Detalle de Remitos</h1>
     
     <dl class="details">
-        <dt>Receipt Number:</dt>
+        <dt>Nro Remito:</dt>
         <dd th:text="${receipt.receiptNumber}"></dd>
         
-        <dt>Date:</dt>
+        <dt>Fecha:</dt>
         <dd th:text="${#temporals.format(receipt.date, 'dd/MM/yyyy')}"></dd>
         
-        <dt>Supplier:</dt>
+        <dt>Proveedor:</dt>
         <dd th:text="${receipt.supplier}"></dd>
     </dl>
     
-    <h2>Materials</h2>
+    <h2>Materiales</h2>
     <table class="table">
         <thead>
             <tr>
-                <th>Code</th>
-                <th>Quality</th>
-                <th>Weight</th>
-                <th>Gross Weight</th>
-                <th>Net Weight</th>
-                <th>Dimensions</th>
+                <th>Codigo</th>
+                <th>Calidad</th>
+                <th>Gramaje</th>
+                <th>KG Brutos</th>
+                <th>KG Netos</th>
+                <th>Dimensiones</th>
             </tr>
         </thead>
         <tbody>
@@ -85,17 +85,17 @@
     </table>
 
     <div class="form-container">
-        <h3>Add New Material</h3>
+        <h3>Agregar Material</h3>
         <form th:action="@{/production/receipts/{id}/materials/add(id=${receipt.id})}" method="post">
             <div class="form-group">
-                <label for="code">Material Code:</label>
+                <label for="code">Codigo:</label>
                 <input type="text" id="code" name="code" required>
             </div>
 
             <div class="form-group">
-                <label for="qualityId">Quality:</label>
+                <label for="qualityId">Calidad:</label>
                 <select id="qualityId" name="qualityId" required>
-                    <option value="">Select Quality</option>
+                    <option value="">Seleccionar Calidad</option>
                     <option th:each="quality : ${qualities}"
                             th:value="${quality.id}"
                             th:text="${quality.name}"></option>
@@ -103,9 +103,9 @@
             </div>
 
             <div class="form-group">
-                <label for="weightId">Weight:</label>
+                <label for="weightId">Gramaje:</label>
                 <select id="weightId" name="weightId" required>
-                    <option value="">Select Weight</option>
+                    <option value="">Seleccionar Gramaje</option>
                     <option th:each="weight : ${weights}"
                             th:value="${weight.id}"
                             th:text="${weight.name}"></option>
@@ -113,26 +113,26 @@
             </div>
 
             <div class="form-group">
-                <label for="grossWeight">Gross Weight (kg):</label>
+                <label for="grossWeight">Brutos (kg):</label>
                 <input type="number" id="grossWeight" name="grossWeight" step="0.01" required>
             </div>
 
             <div class="form-group">
-                <label for="netWeight">Net Weight (kg):</label>
+                <label for="netWeight">Netos (kg):</label>
                 <input type="number" id="netWeight" name="netWeight" step="0.01" required>
             </div>
 
             <div class="form-group">
-                <label for="width">Width (cm):</label>
+                <label for="width">Ancho (cm):</label>
                 <input type="number" id="width" name="width" step="0.1" required>
             </div>
 
             <div class="form-group">
-                <label for="length">Length (cm):</label>
+                <label for="length">Largo (cm):</label>
                 <input type="number" id="length" name="length" step="0.1" required>
             </div>
 
-            <button type="submit" class="btn">Add Material</button>
+            <button type="submit" class="btn">Agregar Material</button>
         </form>
     </div>
 </body>

@@ -81,17 +81,17 @@
     </style>
 </head>
 <body>
-    <h1>Assign Material to Work Order</h1>
+    <h1>Asignar material a Hoja de Ruta</h1>
     
     <div class="details">
         <dl>
-            <dt>Route Number:</dt>
+            <dt>Numero:</dt>
             <dd th:text="${workOrder.routeNumber}"></dd>
-            <dt>Customer Number:</dt>
+            <dt>Cod. Cliente:</dt>
             <dd th:text="${workOrder.customerNumber}"></dd>
-            <dt>Product Number:</dt>
+            <dt>Cod. Producto:</dt>
             <dd th:text="${workOrder.productNumber}"></dd>
-            <dt>Required Weight:</dt>
+            <dt>KG Requeridos:</dt>
             <dd th:text="${workOrder.requiredWeight + ' kg'}"></dd>
         </dl>
     </div>
@@ -100,8 +100,8 @@
         <h3>Scan Material Barcode</h3>
         
         <div class="scanner-options">
-            <button class="btn btn-primary" onclick="startCameraScanner()">Use Camera Scanner</button>
-            <button class="btn btn-primary" onclick="focusManualInput()">Manual Input</button>
+            <button class="btn btn-primary" onclick="startCameraScanner()">Usar Scanner</button>
+            <button class="btn btn-primary" onclick="focusManualInput()">Ingreso Manual</button>
         </div>
 
         <div id="reader" style="display: none;"></div>
@@ -114,27 +114,27 @@
     
     <form th:action="@{/warehouse/assign/{id}(id=${workOrder.id})}" method="post">
         <div class="form-group">
-            <label for="materialCode">Material Code:</label>
+            <label for="materialCode">Codigo Material:</label>
             <input type="text" id="materialCode" name="materialCode" required>
         </div>
         
         <div class="form-group">
-            <label for="orderNumber">Order Number:</label>
+            <label for="orderNumber">Orden Nro:</label>
             <input type="number" id="orderNumber" name="orderNumber" required>
         </div>
         
         <div class="form-group">
-            <label for="updatedNetWeight">Updated Net Weight (kg):</label>
+            <label for="updatedNetWeight">Modificar KG Netos (kg):</label>
             <input type="number" id="updatedNetWeight" name="updatedNetWeight" 
                    step="0.01" placeholder="Leave empty to use original weight">
         </div>
         
-        <button type="submit" class="btn btn-primary">Assign Material</button>
+        <button type="submit" class="btn btn-primary">Asignar</button>
     </form>
     
     <form th:action="@{/warehouse/assign/{id}/close(id=${workOrder.id})}" 
           method="post" style="margin-top: 20px;">
-        <button type="submit" class="btn btn-danger">Close Work Order</button>
+        <button type="submit" class="btn btn-danger">Cerrar Hoja de Ruta</button>
     </form>
 
     <script>

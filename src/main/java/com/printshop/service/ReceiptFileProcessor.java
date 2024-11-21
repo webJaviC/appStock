@@ -47,13 +47,15 @@ public class ReceiptFileProcessor {
             String dateStr = line.substring(154, 163).trim();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
             LocalDate date = LocalDate.parse(dateStr, formatter);
+            String supplier = line.substring(0, 1);
 
             // Create receipt
             Receipt receipt = new Receipt();
             receipt.setReceiptNumber(receiptNumber);
             receipt.setDate(date);
-            receipt.setSupplier("AUTO_IMPORT"); // Default supplier for file imports
+            receipt.setSupplier(supplier); // Default supplier for file imports
             receipt.setMaterials(new HashSet<>());
+            
 
             // Process all lines
             do {

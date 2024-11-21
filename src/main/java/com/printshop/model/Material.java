@@ -1,5 +1,7 @@
 package com.printshop.model;
 
+import java.util.Set;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -35,6 +37,9 @@ public class Material {
     @ManyToOne
     @JoinColumn(name = "receipt_id")
     private Receipt receipt;
+    
+    @OneToMany(mappedBy = "material")
+    private Set<MaterialAssignment> assignments;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -50,6 +55,18 @@ public class Material {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+
+
+	public Set<MaterialAssignment> getAssignments() {
+		return assignments;
+	}
+
+
+
+	public void setAssignments(Set<MaterialAssignment> assignments) {
+		this.assignments = assignments;
 	}
 
 

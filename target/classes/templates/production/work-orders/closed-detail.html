@@ -42,35 +42,35 @@
     </style>
 </head>
 <body>
-    <a href="/production/work-orders/closed" class="back-link btn">← Back to Closed Work Orders</a>
+    <a href="/production/work-orders/closed" class="back-link btn">← Volver a órdenes de trabajo cerradas</a>
 
     <div class="details">
-        <h2>Work Order Details</h2>
+        <h2>Detalle de Hoja de Ruta</h2>
         <dl>
-            <dt>Route Number:</dt>
+            <dt>Numero:</dt>
             <dd th:text="${workOrder.routeNumber}"></dd>
-            <dt>Customer Number:</dt>
+            <dt>Codigo Cliente:</dt>
             <dd th:text="${workOrder.customerNumber}"></dd>
-            <dt>Product Number:</dt>
+            <dt>Codigo Producto:</dt>
             <dd th:text="${workOrder.productNumber}"></dd>
-            <dt>Required Weight:</dt>
+            <dt>KG Requeridos:</dt>
             <dd th:text="${workOrder.requiredWeight + ' kg'}"></dd>
-            <dt>Close Date:</dt>
+            <dt>Fecha de cierre:</dt>
             <dd th:text="${#temporals.format(workOrder.date, 'dd/MM/yyyy')}"></dd>
         </dl>
     </div>
 
-    <h3>Used Materials</h3>
+    <h3>Usados Materiales</h3>
     <table class="table">
         <thead>
             <tr>
-                <th>Order #</th>
-                <th>Material Code</th>
-                <th>Quality</th>
-                <th>Weight</th>
-                <th>Original Net Weight</th>
-                <th>Used Net Weight</th>
-                <th>Assignment Date</th>
+                <th>Orden #</th>
+                <th>Codigo</th>
+                <th>Calidad</th>
+                <th>Gramaje</th>
+                <th>KG Netos</th>
+                
+                <th>Fecha de Asignación </th>
             </tr>
         </thead>
         <tbody>
@@ -80,7 +80,7 @@
                 <td th:text="${assignment.material.quality.name}"></td>
                 <td th:text="${assignment.material.weight.name}"></td>
                 <td th:text="${assignment.material.netWeight + ' kg'}"></td>
-                <td th:text="${assignment.updatedNetWeight + ' kg'}"></td>
+             //   <td th:text="${assignment.updatedNetWeight + ' kg'}"></td>
                 <td th:text="${#temporals.format(assignment.assignmentDate, 'dd/MM/yyyy HH:mm')}"></td>
             </tr>
         </tbody>

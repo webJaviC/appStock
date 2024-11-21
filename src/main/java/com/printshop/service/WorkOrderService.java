@@ -22,25 +22,28 @@ import java.util.Optional;
 @Service
 @Transactional
 public class WorkOrderService {
+	private final InventoryUpdateService inventoryUpdateService;
     private final WorkOrderRepository workOrderRepository;
     private final MaterialRepository materialRepository;
     private final QualityRepository qualityRepository;
     private final WeightRepository weightRepository;
     private final MaterialAssignmentRepository materialAssignmentRepository;
 
-    public WorkOrderService(WorkOrderRepository workOrderRepository, 
-                          MaterialRepository materialRepository,
-                          QualityRepository qualityRepository,
-                          WeightRepository weightRepository,
-                          MaterialAssignmentRepository materialAssignmentRepository) {
-        this.workOrderRepository = workOrderRepository;
-        this.materialRepository = materialRepository;
-        this.qualityRepository = qualityRepository;
-        this.weightRepository = weightRepository;
-        this.materialAssignmentRepository = materialAssignmentRepository;
-    }
+    
 
-    public WorkOrder createWorkOrder(WorkOrder workOrder) {
+    public WorkOrderService(InventoryUpdateService inventoryUpdateService, WorkOrderRepository workOrderRepository,
+			MaterialRepository materialRepository, QualityRepository qualityRepository,
+			WeightRepository weightRepository, MaterialAssignmentRepository materialAssignmentRepository) {
+		super();
+		this.inventoryUpdateService = inventoryUpdateService;
+		this.workOrderRepository = workOrderRepository;
+		this.materialRepository = materialRepository;
+		this.qualityRepository = qualityRepository;
+		this.weightRepository = weightRepository;
+		this.materialAssignmentRepository = materialAssignmentRepository;
+	}
+
+	public WorkOrder createWorkOrder(WorkOrder workOrder) {
         workOrder.setDate(LocalDate.now());
         workOrder.setStatus(WorkOrderStatus.OPEN);
         return workOrderRepository.save(workOrder);
@@ -98,7 +101,10 @@ public class WorkOrderService {
         materialRepository.save(material);
 
         workOrder.getMaterialAssignments().add(assignment);
+        
+        inventoryUpdateService.sendUpdate(material);
         return materialAssignmentRepository.save(assignment);
+       
     }
     
     
@@ -113,13 +119,7 @@ public class WorkOrderService {
         }
 
         if (updatedNetWeight != null) {
-            if (updatedNetWeight <= 0) {
-                throw new RuntimeException("Updated net weight must be greater than 0");
-            }
-            if (updatedNetWeight > assignment.getMaterial().getNetWeight()) {
-                throw new RuntimeException("Updated net weight cannot be greater than original net weight");
-            }
-            assignment.setUpdatedNetWeight(updatedNetWeight);
+            inventoryUpdateService.updateMaterialWeight(assignment, updatedNetWeight);
         }
 
         return materialAssignmentRepository.save(assignment);
@@ -138,6 +138,7 @@ public class WorkOrderService {
         workOrderRepository.save(workOrder);
         
         materialAssignmentRepository.delete(assignment);
+        inventoryUpdateService.sendUpdate(material);
     }
 
     public void closeWorkOrder(Long id) {

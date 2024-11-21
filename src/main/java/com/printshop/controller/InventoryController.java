@@ -6,20 +6,27 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.printshop.dto.MaterialScanResponse;
+import com.printshop.service.InventoryUpdateService;
 import com.printshop.service.MaterialService;
 
 @Controller
 @RequestMapping("/warehouse/inventory")
 public class InventoryController {
     private final MaterialService materialService;
+	private final InventoryUpdateService inventoryUpdateService;
 
-    public InventoryController(MaterialService materialService) {
-        this.materialService = materialService;
-    }
+    
 
-    @GetMapping
+    public InventoryController(MaterialService materialService, InventoryUpdateService inventoryUpdateService) {
+		super();
+		this.materialService = materialService;
+		this.inventoryUpdateService = inventoryUpdateService;
+	}
+
+	@GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'PRODUCTION', 'WAREHOUSE')")
     public String viewInventory(Model model) {
         model.addAttribute("materials", materialService.findAll());
@@ -42,5 +49,15 @@ public class InventoryController {
         return materialService.findByCode(code)
             .map(material -> ResponseEntity.ok(new MaterialScanResponse(true, "Material found", material)))
             .orElse(ResponseEntity.ok(new MaterialScanResponse(false, "Material not found", null)));
+    }
+    
+    @GetMapping("/updates")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PRODUCTION', 'WAREHOUSE')")
+    public SseEmitter streamInventoryUpdates() {
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+        inventoryUpdateService.addEmitter(emitter);
+        emitter.onCompletion(() -> inventoryUpdateService.removeEmitter(emitter));
+        emitter.onTimeout(() -> inventoryUpdateService.removeEmitter(emitter));
+        return emitter;
     }
 }

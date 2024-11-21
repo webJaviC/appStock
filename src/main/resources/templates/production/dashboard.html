@@ -56,26 +56,26 @@
     <div class="header">
         <div>
             <h1>Production Dashboard</h1>
-            <div>Welcome, <span th:text="${#authentication.name}"></span></div>
+            <div>Bienvenido, <span th:text="${#authentication.name}"></span></div>
         </div>
-        <a href="/logout" class="logout-btn">Logout</a>
+        <a href="/logout" class="logout-btn">Cerrar Sesion</a>
     </div>
 
     <div class="dashboard-grid">
         <div class="card">
-            <h3>Work Orders</h3>
-            <a href="/production/work-orders" class="menu-item">View Work Orders</a>
-            <a href="/production/work-orders/create" class="menu-item">Create Work Order</a>
+            <h3>Hojas de Ruta</h3>
+            <a href="/production/work-orders" class="menu-item">Ver Hojas de Ruta</a>
+            <a href="/production/work-orders/create" class="menu-item">Crear Hoja de Ruta</a>
         </div>
 
         <div class="card">
-            <h3>Receipts</h3>
-            <a href="/production/receipts" class="menu-item">View Receipts</a>
-            <a href="/production/receipts/create" class="menu-item">Create Receipt</a>
+            <h3>Remitos</h3>
+            <a href="/production/receipts" class="menu-item">Ver Remitos</a>
+            <a href="/production/receipts/create" class="menu-item">Crear Remito</a>
         </div>
          <div class="card">
-            <h3>Inventory Management</h3>
-             <a href="/warehouse/inventory" class="menu-item">View Inventory</a>
+            <h3>Inventario</h3>
+             <a href="/warehouse/inventory" class="menu-item">Ver Inventario</a>
             
         </div>
     </div>

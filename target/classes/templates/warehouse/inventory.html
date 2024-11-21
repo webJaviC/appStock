@@ -1,3 +1,4 @@
+<!-- src/main/resources/templates/warehouse/inventory.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -39,6 +40,11 @@
         .status-available { color: #28a745; }
         .status-reserved { color: #ffc107; }
         .status-used { color: #dc3545; }
+        .work-order-info {
+            font-size: 0.9em;
+            margin-top: 4px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -47,39 +53,40 @@
     <div class="filters">
         <input type="text" id="codeFilter" placeholder="Filter by code">
         <select id="qualityFilter">
-            <option value="">All Qualities</option>
+            <option value="">Filtrar por Calidad</option>
             <option th:each="quality : ${qualities}"
                     th:value="${quality.name}"
                     th:text="${quality.name}"></option>
         </select>
         <select id="weightFilter">
-            <option value="">All Weights</option>
+            <option value="">Filtrar por Gramaje</option>
             <option th:each="weight : ${weights}"
                     th:value="${weight.name}"
                     th:text="${weight.name}"></option>
         </select>
         <select id="statusFilter">
-            <option value="">All Statuses</option>
-            <option value="AVAILABLE">Available</option>
-            <option value="RESERVED">Reserved</option>
-            <option value="USED">Used</option>
+            <option value="">Filtrar por Estado</option>
+            <option value="AVAILABLE">Disponible</option>
+            <option value="RESERVED">Reservado</option>
+            <option value="USED">Usado</option>
         </select>
     </div>
     
     <table class="table">
         <thead>
             <tr>
-                <th>Code</th>
-                <th>Quality</th>
-                <th>Weight</th>
-                <th>Gross Weight</th>
-                <th>Net Weight</th>
-                <th>Dimensions</th>
-                <th>Status</th>
+                <th>Codigo</th>
+                <th>Calidad</th>
+                <th>Gramaje</th>
+                <th>KG Brutos</th>
+                <th>KG Netos</th>
+                <th>Dimensiones</th>
+                <th>Estado</th>
+                <th>Hoja de ruta</th>
             </tr>
         </thead>
-        <tbody>
-            <tr th:each="material : ${materials}">
+        <tbody id="materialsTableBody">
+            <tr th:each="material : ${materials}" th:id="'material-' + ${material.code}">
                 <td th:text="${material.code}"></td>
                 <td th:text="${material.quality.name}"></td>
                 <td th:text="${material.weight.name}"></td>
@@ -88,11 +95,64 @@
                 <td th:text="${material.width + ' x ' + material.length + ' cm'}"></td>
                 <td th:class="${'status-' + #strings.toLowerCase(material.status)}"
                     th:text="${material.status}"></td>
+                <td>
+                    <th:block th:if="${material.status != T(com.printshop.model.Material.MaterialStatus).AVAILABLE}">
+                        <div th:each="assignment : ${material.assignments}">
+                            <div>Route: <span th:text="${assignment.workOrder.routeNumber}"></span></div>
+                            <div class="work-order-info">
+                                <span th:if="${assignment.orderNumber}">Order #: <span th:text="${assignment.orderNumber}"></span></span>
+                                <span th:if="${assignment.updatedNetWeight}">Weight: <span th:text="${assignment.updatedNetWeight + ' kg'}"></span></span>
+                            </div>
+                        </div>
+                    </th:block>
+                </td>
             </tr>
         </tbody>
     </table>
 
     <script>
+        let eventSource;
+
+        function connectToSSE() {
+            eventSource = new EventSource('/warehouse/inventory/updates');
+            
+            eventSource.onmessage = function(event) {
+                const update = JSON.parse(event.data);
+                updateMaterialRow(update);
+            };
+
+            eventSource.onerror = function() {
+                eventSource.close();
+                setTimeout(connectToSSE, 1000); // Reconectar después de 1 segundos
+            };
+        }
+
+        function updateMaterialRow(update) {
+            const row = document.getElementById('material-' + update.code);
+            if (row) {
+                // Actualizar estado
+                const statusCell = row.cells[6];
+                statusCell.className = 'status-' + update.status.toLowerCase();
+                statusCell.textContent = update.status;
+
+                // Actualizar información de orden de trabajo
+                const workOrderCell = row.cells[7];
+                if (update.status === 'AVAILABLE') {
+                    workOrderCell.innerHTML = '';
+                } else {
+                    workOrderCell.innerHTML = `
+                        <div>
+                            Route: ${update.workOrder.routeNumber}
+                            <div class="work-order-info">
+                                ${update.orderNumber ? 'Order #: ' + update.orderNumber : ''}
+                                ${update.updatedNetWeight ? 'Weight: ' + update.updatedNetWeight + ' kg' : ''}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
         document.getElementById('codeFilter').addEventListener('input', filterTable);
         document.getElementById('qualityFilter').addEventListener('change', filterTable);
         document.getElementById('weightFilter').addEventListener('change', filterTable);
@@ -120,6 +180,9 @@
                 row.style.display = matchesCode && matchesQuality && matchesWeight && matchesStatus ? '' : 'none';
             });
         }
+
+        // Iniciar conexión SSE cuando se carga la página
+        document.addEventListener('DOMContentLoaded', connectToSSE);
     </script>
 </body>
 </html>

@@ -32,14 +32,14 @@
           th:object="${material}" method="post">
         
         <div class="form-group">
-            <label for="code">Material Code:</label>
+            <label for="code">Codigo Material:</label>
             <input type="text" id="code" th:field="*{code}" required>
         </div>
         
         <div class="form-group">
-            <label for="quality">Quality:</label>
+            <label for="quality">Calidad:</label>
             <select id="quality" th:field="*{quality}" required>
-                <option value="">Select Quality</option>
+                <option value="">Seleccionar Calidad</option>
                 <option th:each="quality : ${qualities}"
                         th:value="${quality.id}"
                         th:text="${quality.name}"></option>
@@ -47,9 +47,9 @@
         </div>
         
         <div class="form-group">
-            <label for="weight">Weight:</label>
+            <label for="weight">Gramaje:</label>
             <select id="weight" th:field="*{weight}" required>
-                <option value="">Select Weight</option>
+                <option value="">Seleccionar Gramaje</option>
                 <option th:each="weight : ${weights}"
                         th:value="${weight.id}"
                         th:text="${weight.name}"></option>
@@ -57,26 +57,26 @@
         </div>
         
         <div class="form-group">
-            <label for="grossWeight">Gross Weight (kg):</label>
+            <label for="grossWeight">KG Brutos (kg):</label>
             <input type="number" id="grossWeight" th:field="*{grossWeight}" step="0.01" required>
         </div>
         
         <div class="form-group">
-            <label for="netWeight">Net Weight (kg):</label>
+            <label for="netWeight">KG Netos (kg):</label>
             <input type="number" id="netWeight" th:field="*{netWeight}" step="0.01" required>
         </div>
         
         <div class="form-group">
-            <label for="width">Width (cm):</label>
+            <label for="width">Ancho (cm):</label>
             <input type="number" id="width" th:field="*{width}" step="0.1" required>
         </div>
         
         <div class="form-group">
-            <label for="length">Length (cm):</label>
+            <label for="length">Largo (cm):</label>
             <input type="number" id="length" th:field="*{length}" step="0.1" required>
         </div>
         
-        <button type="submit" class="btn">Save Material</button>
+        <button type="submit" class="btn">Guardar Material</button>
     </form>
 </body>
 </html>
