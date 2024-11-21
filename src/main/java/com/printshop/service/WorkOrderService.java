@@ -22,28 +22,28 @@ import java.util.Optional;
 @Service
 @Transactional
 public class WorkOrderService {
-	private final InventoryUpdateService inventoryUpdateService;
+    private final InventoryUpdateService inventoryUpdateService;
     private final WorkOrderRepository workOrderRepository;
     private final MaterialRepository materialRepository;
     private final QualityRepository qualityRepository;
     private final WeightRepository weightRepository;
     private final MaterialAssignmentRepository materialAssignmentRepository;
 
-    
+    public WorkOrderService(InventoryUpdateService inventoryUpdateService,
+                          WorkOrderRepository workOrderRepository,
+                          MaterialRepository materialRepository,
+                          QualityRepository qualityRepository,
+                          WeightRepository weightRepository,
+                          MaterialAssignmentRepository materialAssignmentRepository) {
+        this.inventoryUpdateService = inventoryUpdateService;
+        this.workOrderRepository = workOrderRepository;
+        this.materialRepository = materialRepository;
+        this.qualityRepository = qualityRepository;
+        this.weightRepository = weightRepository;
+        this.materialAssignmentRepository = materialAssignmentRepository;
+    }
 
-    public WorkOrderService(InventoryUpdateService inventoryUpdateService, WorkOrderRepository workOrderRepository,
-			MaterialRepository materialRepository, QualityRepository qualityRepository,
-			WeightRepository weightRepository, MaterialAssignmentRepository materialAssignmentRepository) {
-		super();
-		this.inventoryUpdateService = inventoryUpdateService;
-		this.workOrderRepository = workOrderRepository;
-		this.materialRepository = materialRepository;
-		this.qualityRepository = qualityRepository;
-		this.weightRepository = weightRepository;
-		this.materialAssignmentRepository = materialAssignmentRepository;
-	}
-
-	public WorkOrder createWorkOrder(WorkOrder workOrder) {
+    public WorkOrder createWorkOrder(WorkOrder workOrder) {
         workOrder.setDate(LocalDate.now());
         workOrder.setStatus(WorkOrderStatus.OPEN);
         return workOrderRepository.save(workOrder);
@@ -80,34 +80,20 @@ public class WorkOrderService {
             throw new RuntimeException("Material is already assigned to this work order");
         }
 
-        // Check material status and provide specific messages
-        switch (material.getStatus()) {
-            case RESERVED:
-                throw new RuntimeException("Material is already reserved for another work order");
-            case USED:
-                throw new RuntimeException("Material has already been used");
-            case AVAILABLE:
-                break;
-            default:
-                throw new RuntimeException("Invalid material status");
-        }
+        // Reserve material using inventory service
+        inventoryUpdateService.reserveMaterial(material);
 
         MaterialAssignment assignment = new MaterialAssignment();
         assignment.setWorkOrder(workOrder);
         assignment.setMaterial(material);
         assignment.setUpdatedNetWeight(material.getNetWeight());
 
-        material.setStatus(Material.MaterialStatus.RESERVED);
-        materialRepository.save(material);
-
         workOrder.getMaterialAssignments().add(assignment);
+        MaterialAssignment savedAssignment = materialAssignmentRepository.save(assignment);
         
         inventoryUpdateService.sendUpdate(material);
-        return materialAssignmentRepository.save(assignment);
-       
+        return savedAssignment;
     }
-    
-    
 
     public MaterialAssignment updateAssignment(Long assignmentId, Integer orderNumber, Double updatedNetWeight) {
         MaterialAssignment assignment = materialAssignmentRepository.findById(assignmentId)
@@ -130,8 +116,7 @@ public class WorkOrderService {
             .orElseThrow(() -> new RuntimeException("Assignment not found"));
 
         Material material = assignment.getMaterial();
-        material.setStatus(Material.MaterialStatus.AVAILABLE);
-        materialRepository.save(material);
+        inventoryUpdateService.releaseMaterial(material);
 
         WorkOrder workOrder = assignment.getWorkOrder();
         workOrder.getMaterialAssignments().remove(assignment);
@@ -156,11 +141,9 @@ public class WorkOrderService {
             throw new RuntimeException("Cannot close work order: Some materials are not ordered");
         }
 
-        workOrder.getMaterialAssignments().forEach(assignment -> {
-            Material material = assignment.getMaterial();
-            material.setStatus(Material.MaterialStatus.USED);
-            materialRepository.save(material);
-        });
+        // Process each material assignment using inventory service
+        workOrder.getMaterialAssignments().forEach(assignment -> 
+            inventoryUpdateService.processUsedMaterial(assignment, workOrder));
         
         workOrder.setStatus(WorkOrderStatus.CLOSED);
         workOrderRepository.save(workOrder);
@@ -173,5 +156,4 @@ public class WorkOrderService {
     public List<WorkOrder> findAll() {
         return workOrderRepository.findAll();
     }
-
 }
