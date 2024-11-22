@@ -55,14 +55,18 @@
         
         <div th:if="${error}" class="alert" th:text="${error}"></div>
         
-        <div class="file-format">
+       <!-- <div class="file-format">
             <h3>Fromato Esperado:</h3>
             <p>Cada línea debe seguir este formato:</p>
             <code>P0001915057029001900120000400200700082500000001MPCAPLI072532   00000006690000000011000000068300000000010000000000000000000000000000010000112115000007606826/06/2024</code>
             
-        </div>
+        </div> -->
+       
+		  
+	     
         
         <form th:action="@{/production/receipts/import}" method="post" enctype="multipart/form-data">
+			 
             <div class="form-group">
                 <label for="file">Seleccionar Archivo:</label>
                 <input type="file" id="file" name="file" accept=".txt" required>
