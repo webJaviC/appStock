@@ -40,18 +40,18 @@ public class MaterialService {
     
     public Material createMaterial(Material material) {
         if (materialRepository.existsByCode(material.getCode())) {
-            throw new RuntimeException("Material with this code already exists");
+            throw new RuntimeException("Ya existe material con este código");
         }
-        material.setStatus(Material.MaterialStatus.AVAILABLE);
+        material.setStatus(Material.MaterialStatus.DISPONIBLE);
         return materialRepository.save(material);
     }
 
     public Material updateMaterial(Material material) {
         if (!materialRepository.existsById(material.getId())) {
-            throw new RuntimeException("Material not found");
+            throw new RuntimeException("Material no encontrado");
         }
         if (material.getStatus() == null) {
-            material.setStatus(Material.MaterialStatus.AVAILABLE);
+            material.setStatus(Material.MaterialStatus.DISPONIBLE);
         }
         return materialRepository.save(material);
     }

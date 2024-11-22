@@ -80,24 +80,24 @@ public class InventoryUpdateService {
     @Transactional
     public void reserveMaterial(Material material) {
         switch (material.getStatus()) {
-            case RESERVED:
-                throw new IllegalStateException("Material is already reserved for another work order");
-            case USED:
-                throw new IllegalStateException("Material has already been used");
-            case AVAILABLE:
-                updateMaterialStatus(material, Material.MaterialStatus.RESERVED);
+            case RESERVADO:
+                throw new IllegalStateException("El material ya está reservado para otra orden de trabajo");
+            case USADO:
+                throw new IllegalStateException("El material ya ha sido utilizado");
+            case DISPONIBLE:
+                updateMaterialStatus(material, Material.MaterialStatus.RESERVADO);
                 break;
             default:
-                throw new IllegalStateException("Invalid material status");
+                throw new IllegalStateException("Estado de material no válido");
         }
     }
 
     @Transactional
     public void releaseMaterial(Material material) {
-        if (material.getStatus() != Material.MaterialStatus.RESERVED) {
-            throw new IllegalStateException("Material is not currently reserved");
+        if (material.getStatus() != Material.MaterialStatus.RESERVADO) {
+            throw new IllegalStateException("El material no está reservado actualmente");
         }
-        updateMaterialStatus(material, Material.MaterialStatus.AVAILABLE);
+        updateMaterialStatus(material, Material.MaterialStatus.DISPONIBLE);
     }
 
     @Transactional
@@ -127,11 +127,11 @@ public class InventoryUpdateService {
             material.setNetWeight(remainingWeight);
             material.setGrossWeight(calculateProportionalWeight(material.getGrossWeight(), 
                                                              originalNetWeight, remainingWeight));
-            material.setStatus(Material.MaterialStatus.AVAILABLE);
+            material.setStatus(Material.MaterialStatus.DISPONIBLE);
             materialRepository.save(material);
         } else {
             // If no weight remains, mark as used
-            material.setStatus(Material.MaterialStatus.USED);
+            material.setStatus(Material.MaterialStatus.USADO);
             materialRepository.save(material);
         }
         
@@ -155,12 +155,12 @@ public class InventoryUpdateService {
     @Transactional
     public void updateMaterialWeight(MaterialAssignment assignment, Double updatedNetWeight) {
         if (updatedNetWeight <= 0) {
-            throw new IllegalArgumentException("Updated weight must be greater than zero");
+            throw new IllegalArgumentException("El peso actualizado debe ser mayor que cero");
         }
 
         Material material = assignment.getMaterial();
         if (updatedNetWeight > material.getNetWeight()) {
-            throw new IllegalArgumentException("Updated weight cannot exceed original net weight");
+            throw new IllegalArgumentException("El peso actualizado no puede exceder el peso neto original");
         }
 
         assignment.setUpdatedNetWeight(updatedNetWeight);

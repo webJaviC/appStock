@@ -34,7 +34,7 @@ public class InventoryController {
         
         // Calculate total available net weight
         double totalAvailableWeight = materials.stream()
-            .filter(m -> m.getStatus() == Material.MaterialStatus.AVAILABLE)
+            .filter(m -> m.getStatus() == Material.MaterialStatus.DISPONIBLE)
             .mapToDouble(Material::getNetWeight)
             .sum();
 

@@ -26,7 +26,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
 
         return new org.springframework.security.core.userdetails.User(
             user.getUsername(),
@@ -41,7 +41,7 @@ public class UserService implements UserDetailsService {
 
     public User createUser(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
-            throw new RuntimeException("Username already exists");
+            throw new RuntimeException("El nombre de usuario ya existe");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
@@ -49,11 +49,11 @@ public class UserService implements UserDetailsService {
 
     public User updateUser(User user) {
         User existingUser = userRepository.findById(user.getId())
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         
         if (!existingUser.getUsername().equals(user.getUsername()) &&
             userRepository.existsByUsername(user.getUsername())) {
-            throw new RuntimeException("Username already exists");
+            throw new RuntimeException("El nombre de usuario ya existe");
         }
 
         // Only update password if provided
@@ -68,7 +68,7 @@ public class UserService implements UserDetailsService {
 
     public void toggleUserStatus(Long id) {
         User user = userRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         user.setActive(!user.isActive());
         userRepository.save(user);
     }
@@ -79,6 +79,6 @@ public class UserService implements UserDetailsService {
 
     public User findById(Long id) {
         return userRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 }

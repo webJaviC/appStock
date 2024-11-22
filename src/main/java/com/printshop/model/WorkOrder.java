@@ -38,7 +38,7 @@ public class WorkOrder {
     private LocalDate date;
 
     @Enumerated(EnumType.STRING)
-    private WorkOrderStatus status = WorkOrderStatus.OPEN;
+    private WorkOrderStatus status = WorkOrderStatus.ABIERTA;
     
     
 

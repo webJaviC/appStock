@@ -28,7 +28,7 @@ public class MaterialAssignment {
     
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private MaterialStatus status = MaterialStatus.AVAILABLE;
+    private MaterialStatus status = MaterialStatus.DISPONIBLE;
 
     @PrePersist
     protected void onCreate() {

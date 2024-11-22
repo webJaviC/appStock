@@ -84,12 +84,12 @@
 				<td th:text="${user.fullName}"></td>
 				<td th:text="${user.role}"></td>
 				<td th:class="${user.active ? 'status-active' : 'status-inactive'}"
-					th:text="${user.active ? 'Active' : 'Inactive'}"></td>
+					th:text="${user.active ? 'Activo' : 'Inactivo'}"></td>
 				<td>
 					<a th:href="@{/admin/users/{id}/edit(id=${user.id})}" class="btn btn-warning">Editar</a>
 					<form th:action="@{/admin/users/{id}/toggle(id=${user.id})}" method="post" style="display: inline;">
 						<button type="submit" class="btn btn-danger"
-							th:text="${user.active ? 'Deactivar' : 'Activate'}">
+							th:text="${user.active ? 'Deactivar' : 'Activar'}">
 						</button>
 					</form>
 				</td>

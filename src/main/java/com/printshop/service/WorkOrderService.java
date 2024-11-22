@@ -45,7 +45,7 @@ public class WorkOrderService {
 
     public WorkOrder createWorkOrder(WorkOrder workOrder) {
         workOrder.setDate(LocalDate.now());
-        workOrder.setStatus(WorkOrderStatus.OPEN);
+        workOrder.setStatus(WorkOrderStatus.ABIERTA);
         return workOrderRepository.save(workOrder);
     }
 
@@ -54,7 +54,7 @@ public class WorkOrderService {
     }
 
     public List<WorkOrder> findAllActive() {
-        return workOrderRepository.findByStatus(WorkOrderStatus.OPEN);
+        return workOrderRepository.findByStatus(WorkOrderStatus.ABIERTA);
     }
 
     public List<Quality> getAllQualities() {
@@ -145,12 +145,12 @@ public class WorkOrderService {
         workOrder.getMaterialAssignments().forEach(assignment -> 
             inventoryUpdateService.processUsedMaterial(assignment, workOrder));
         
-        workOrder.setStatus(WorkOrderStatus.CLOSED);
+        workOrder.setStatus(WorkOrderStatus.CERRADA);
         workOrderRepository.save(workOrder);
     }
     
     public List<WorkOrder> findAllClosed() {
-        return workOrderRepository.findByStatus(WorkOrderStatus.CLOSED);
+        return workOrderRepository.findByStatus(WorkOrderStatus.CERRADA);
     }
 
     public List<WorkOrder> findAll() {

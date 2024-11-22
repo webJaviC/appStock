@@ -46,7 +46,7 @@ public class Material {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private MaterialStatus status = MaterialStatus.AVAILABLE;
+    private MaterialStatus status = MaterialStatus.DISPONIBLE;
     
     
 
@@ -183,15 +183,15 @@ public class Material {
 
 
 	public enum MaterialStatus {
-        AVAILABLE,
-        RESERVED,
-        USED
+        DISPONIBLE,
+        RESERVADO,
+        USADO
     }
 	
 	@PrePersist
 	protected void onCreate() {
 	    if (status == null) {
-	        status = MaterialStatus.AVAILABLE;
+	        status = MaterialStatus.DISPONIBLE;
 	    }
 	}
 	

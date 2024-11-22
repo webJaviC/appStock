@@ -5,6 +5,8 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.Set;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 @Data
 @Entity
 @Table(name = "receipts")
@@ -15,7 +17,8 @@ public class Receipt {
 
     @Column(nullable = false, unique = true)
     private String receiptNumber;
-
+    
+    
     private LocalDate date;
 
     @Column(nullable = false)
