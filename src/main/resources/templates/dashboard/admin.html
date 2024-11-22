@@ -1,169 +1,189 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>Admin Dashboard - Print Shop Inventory System</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-        .card {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        .card h3 {
-            color: #2c3e50;
-            margin-top: 0;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-        }
-        .card-content {
-            margin-top: 15px;
-        }
-        .menu-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            color: #34495e;
-            text-decoration: none;
-            border-radius: 4px;
-            margin-bottom: 5px;
-        }
-        .menu-item:hover {
-            background-color: #f0f3f6;
-        }
-        .icon {
-            margin-right: 10px;
-            width: 24px;
-            height: 24px;
-            background-size: contain;
-        }
-        .header {
-            background: #2c3e50;
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .welcome-text {
-            font-size: 1.1em;
-            margin-top: 10px;
-        }
-        .logout-btn {
-            float: right;
-            background: #e74c3c;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 4px;
-            text-decoration: none;
-        }
-        .logout-btn:hover {
-            background: #c0392b;
-        }
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 4px;
-        }
-        .stat-item {
-            text-align: center;
-        }
-        .stat-value {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        .stat-label {
-            color: #7f8c8d;
-            font-size: 0.9em;
-        }
-    </style>
+	<title>Admin Dashboard - Print Shop Inventory System</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 20px;
+			background-color: #f5f5f5;
+		}
+
+		.dashboard-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+			gap: 20px;
+			padding: 20px;
+		}
+
+		.card {
+			background: white;
+			border-radius: 8px;
+			padding: 20px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			transition: transform 0.2s;
+		}
+
+		.card:hover {
+			transform: translateY(-5px);
+		}
+
+		.card h3 {
+			color: #2c3e50;
+			margin-top: 0;
+			border-bottom: 2px solid #3498db;
+			padding-bottom: 10px;
+		}
+
+		.card-content {
+			margin-top: 15px;
+		}
+
+		.menu-item {
+			display: flex;
+			align-items: center;
+			padding: 10px;
+			color: #34495e;
+			text-decoration: none;
+			border-radius: 4px;
+			margin-bottom: 5px;
+		}
+
+		.menu-item:hover {
+			background-color: #f0f3f6;
+		}
+
+		.icon {
+			margin-right: 10px;
+			width: 24px;
+			height: 24px;
+			background-size: contain;
+		}
+
+		.header {
+			background: #2c3e50;
+			color: white;
+			padding: 20px;
+			border-radius: 8px;
+			margin-bottom: 20px;
+		}
+
+		.welcome-text {
+			font-size: 1.1em;
+			margin-top: 10px;
+		}
+
+		.logout-btn {
+			float: right;
+			background: #e74c3c;
+			color: white;
+			padding: 8px 16px;
+			border-radius: 4px;
+			text-decoration: none;
+		}
+
+		.logout-btn:hover {
+			background: #c0392b;
+		}
+
+		.stats {
+			display: flex;
+			justify-content: space-between;
+			margin-top: 15px;
+			padding: 10px;
+			background: #f8f9fa;
+			border-radius: 4px;
+		}
+
+		.stat-item {
+			text-align: center;
+		}
+
+		.stat-value {
+			font-size: 1.5em;
+			font-weight: bold;
+			color: #2c3e50;
+		}
+
+		.stat-label {
+			color: #7f8c8d;
+			font-size: 0.9em;
+		}
+	</style>
 </head>
+
 <body>
-    <div class="header">
-        <h1>Admin Dashboard</h1>
-        <div class="welcome-text">Bienvenido, <span th:text="${#authentication.name}"></span></div>
-        <a href="/logout" class="logout-btn">Cerrar Sesión</a>
-    </div>
+	<div th:replace="fragments/nav :: nav"></div>
+	<div class="header">
+		<h1>Administrador Inicio</h1>
+		<div class="welcome-text">Bienvenido, <span th:text="${#authentication.name}"></span></div>
+		<!--<a href="/logout" class="logout-btn">Cerrar Sesión</a>-->
+	</div>
 
-    <div class="dashboard-grid">
-        <div class="card">
-            <h3>Usuarios</h3>
-            <div class="card-content">
-                <a href="/admin/users" class="menu-item">
-                    <span class="icon">👥</span>
-                    Ver Usuarios.
-                </a>
-                <a href="/admin/users/create" class="menu-item">
-                    <span class="icon">➕</span>
-                    Crear Nuevo Usuario.
-                </a>
-            </div>
-        </div>
+	<div class="dashboard-grid">
+		<div class="card">
+			<h3>Usuarios</h3>
+			<div class="card-content">
+				<a href="/admin/users" class="menu-item">
+					<span class="icon">👥</span>
+					Ver Usuarios.
+				</a>
+				<a href="/admin/users/create" class="menu-item">
+					<span class="icon">➕</span>
+					Crear Nuevo Usuario.
+				</a>
+			</div>
+		</div>
 
-        <div class="card">
-            <h3>Hojas de Ruta</h3>
-            <div class="card-content">
-                <a href="/production/work-orders" class="menu-item">
-                    <span class="icon">📋</span>
-                    Ver Hojas de Ruta 
-                </a>
-                <a href="/production/work-orders/create" class="menu-item">
-                    <span class="icon">➕</span>
-                    Crear Hoja de Ruta
-                </a>
-            </div>
-        </div>
+		<div class="card">
+			<h3>Hojas de Ruta</h3>
+			<div class="card-content">
+				<a href="/production/work-orders" class="menu-item">
+					<span class="icon">📋</span>
+					Ver Hojas de Ruta
+				</a>
+				<a href="/production/work-orders/create" class="menu-item">
+					<span class="icon">➕</span>
+					Crear Hoja de Ruta
+				</a>
+			</div>
+		</div>
 
-        <div class="card">
-            <h3>Remitos</h3>
-            <div class="card-content">
-                <a href="/production/receipts" class="menu-item">
-                    <span class="icon">📝</span>
-                    Ver Remitos
-                </a>
-                <a href="/production/receipts/create" class="menu-item">
-                    <span class="icon">➕</span>
-                    Crear Remito
-                </a>
-                <a href="/production/receipts/import" class="menu-item">
-                    <span class="icon">📥</span>
-                    Importar Remito
-                </a>
-            </div>
-        </div>
+		<div class="card">
+			<h3>Remitos</h3>
+			<div class="card-content">
+				<a href="/production/receipts" class="menu-item">
+					<span class="icon">📝</span>
+					Ver Remitos
+				</a>
+				<a href="/production/receipts/create" class="menu-item">
+					<span class="icon">➕</span>
+					Crear Remito
+				</a>
+				<a href="/production/receipts/import" class="menu-item">
+					<span class="icon">📥</span>
+					Importar Remito
+				</a>
+			</div>
+		</div>
 
-        <div class="card">
-            <h3>Inventario</h3>
-            <div class="card-content">
-                <a href="/warehouse/inventory" class="menu-item">
-                    <span class="icon">📦</span>
-                    Ver Inventario
-                </a>
-               <a href="/warehouse/used-materials" class="menu-item">📚 Historial de Materiales Usados</a>
-            </div>
-        </div>
+		<div class="card">
+			<h3>Inventario</h3>
+			<div class="card-content">
+				<a href="/warehouse/inventory" class="menu-item">
+					<span class="icon">📦</span>
+					Ver Inventario
+				</a>
+				<a href="/warehouse/used-materials" class="menu-item">📚 Historial de Materiales Usados</a>
+			</div>
+		</div>
 
 
-    </div>
+	</div>
 </body>
+
 </html>

@@ -1,85 +1,112 @@
 <!-- src/main/resources/templates/production/work-orders/closed-list.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Closed Work Orders - Print Shop Inventory System</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-        .table { 
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .table th, .table td { 
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        .table th { background-color: #f8f9fa; }
-        .btn {
-            padding: 8px 16px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            display: inline-block;
-            margin-right: 10px;
-        }
-        .nav-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #dee2e6;
-            padding-bottom: 10px;
-        }
-        .nav-tab {
-            text-decoration: none;
-            color: #6c757d;
-            padding: 8px 16px;
-            border-radius: 4px;
-        }
-        .nav-tab.active {
-            color: #007bff;
-            border-bottom: 2px solid #007bff;
-            margin-bottom: -12px;
-        }
-    </style>
-</head>
-<body>
-   
 
-    <h1>Closed Work Orders</h1>
-     <div class="nav-tabs">
-        <a href="/production/work-orders" class="btn">Hojas de Ruta Activas</a>
-        <a href="/production/work-orders/closed" class="btn">Hojas de ruta Cerradas</a>
-    </div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nro</th>
-                <th>Cliente</th>
-                <th>Producto</th>
-                <th>Peso Requerido</th>
-                <th>Fecha de Cierre</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="workOrder : ${workOrders}">
-                <td th:text="${workOrder.routeNumber}"></td>
-                <td th:text="${workOrder.customerNumber}"></td>
-                <td th:text="${workOrder.productNumber}"></td>
-                <td th:text="${workOrder.requiredWeight + ' kg'}"></td>
-                <td th:text="${#temporals.format(workOrder.date, 'dd/MM/yyyy')}"></td>
-                <td>
-                    <a th:href="@{/production/work-orders/closed/{id}(id=${workOrder.id})}" 
-                       class="btn">View Details</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+<head>
+	<title>Closed Work Orders - Print Shop Inventory System</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 20px;
+		}
+
+		.table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 20px;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		}
+
+		.table th,
+		.table td {
+			padding: 12px;
+			text-align: left;
+			border-bottom: 1px solid #ddd;
+		}
+
+		.table th {
+			background-color: #f8f9fa;
+		}
+
+		.btn {
+			padding: 8px 16px;
+			background-color: #007bff;
+			color: white;
+			text-decoration: none;
+			border-radius: 4px;
+			display: inline-block;
+			margin-right: 10px;
+		}
+		
+		.btn-detalle{
+			padding: 8px 16px;
+			background-color: rgb(0, 64, 128);
+			color: white;
+			text-decoration: none;
+			border-radius: 4px;
+			display: inline-block;
+			margin-right: 10px;
+		}
+		
+
+		.nav-tabs {
+			display: flex;
+			gap: 10px;
+			margin-bottom: 20px;
+			border-bottom: 2px solid #dee2e6;
+			padding-bottom: 10px;
+		}
+
+		.nav-tab {
+			text-decoration: none;
+			color: #6c757d;
+			padding: 8px 16px;
+			border-radius: 4px;
+		}
+
+		.nav-tab.active {
+			color: #007bff;
+			border-bottom: 2px solid #007bff;
+			margin-bottom: -12px;
+		}
+	</style>
+</head>
+
+<body>
+	<div th:replace="fragments/nav :: nav"></div>
+
+	<h1>Closed Work Orders</h1>
+	<div class="nav-tabs">
+		<a href="/production/work-orders" class="btn">Hojas de Ruta Activas</a>
+		<!--  <a href="/production/work-orders/closed" class="btn">Hojas de ruta Cerradas</a>   -->
+	</div>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Nro</th>
+				<th>Cliente</th>
+				<th>Producto</th>
+				<th>Peso Requerido</th>
+				<th>Fecha de Cierre</th>
+				<th>Estado</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="workOrder : ${workOrders}">
+				<td th:text="${workOrder.routeNumber}"></td>
+				<td th:text="${workOrder.customerNumber}"></td>
+				<td th:text="${workOrder.productNumber}"></td>
+				<td th:text="${workOrder.requiredWeight + ' kg'}"></td>
+				<td th:text="${#temporals.format(workOrder.date, 'dd/MM/yyyy')}"></td>
+				<td>
+					<a th:href="@{/production/work-orders/closed/{id}(id=${workOrder.id})}" class="btn-detalle">Ver Detalle</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 </body>
+
 </html>

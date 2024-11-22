@@ -1,275 +1,290 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-    <title>Inventory View</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        /* Previous styles remain the same */
-        .filters {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .filters-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .filter-group label {
-            font-weight: 500;
-            color: #2c3e50;
-        }
-        .filter-group select,
-        .filter-group input {
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            width: 100%;
-        }
-        .filter-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .filter-btn {
-            padding: 8px 16px;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        .apply-btn {
-            background: #2c3e50;
-            color: white;
-        }
-        .reset-btn {
-            background: #95a5a6;
-            color: white;
-        }
-        .dimension-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .table-actions {
-            display: flex;
-            gap: 10px;
-        }
-        .action-btn {
-            padding: 4px 8px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 0.9em;
-            color: white;
-        }
-        .view-btn {
-            background: #3498db;
-        }
-        .edit-btn {
-            background: #2ecc71;
-        }
-    </style>
+	<title>Inventory View</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		/* Previous styles remain the same */
+		.filters {
+			background: white;
+			padding: 20px;
+			border-radius: 8px;
+			margin-bottom: 20px;
+		}
+
+		.filters-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 15px;
+		}
+
+		.filter-group {
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
+		}
+
+		.filter-group label {
+			font-weight: 500;
+			color: #2c3e50;
+		}
+
+		.filter-group select,
+		.filter-group input {
+			padding: 8px;
+			border-radius: 4px;
+			border: 1px solid #ddd;
+			width: 100%;
+		}
+
+		.filter-buttons {
+			display: flex;
+			gap: 10px;
+			margin-top: 15px;
+		}
+
+		.filter-btn {
+			padding: 8px 16px;
+			border-radius: 4px;
+			border: none;
+			cursor: pointer;
+			font-weight: 500;
+		}
+
+		.apply-btn {
+			background: #2c3e50;
+			color: white;
+		}
+
+		.reset-btn {
+			background: #95a5a6;
+			color: white;
+		}
+
+		.dimension-group {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 10px;
+		}
+
+		.table-actions {
+			display: flex;
+			gap: 10px;
+		}
+
+		.action-btn {
+			padding: 4px 8px;
+			border-radius: 4px;
+			text-decoration: none;
+			font-size: 0.9em;
+			color: white;
+		}
+
+		.view-btn {
+			background: #3498db;
+		}
+
+		.edit-btn {
+			background: #2ecc71;
+		}
+	</style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="header">
-            <div>
-                <h1>Inventory Management</h1>
-                <div>Bienvenido, <span th:text="${#authentication.name}"></span></div>
-            </div>
-            <div>
-                <a href="javascript:history.back()" class="back-btn">Regresar a Dashboard</a>
-                <a href="/logout" class="logout-btn">Cerrar Sesion</a>
-            </div>
-        </div>
+	<div th:replace="fragments/nav :: nav"></div>
+	<div class="container">
+		<div class="header">
+			<div>
+				<h1>Inventory Management</h1>
+				<div>Bienvenido, <span th:text="${#authentication.name}"></span></div>
+			</div>
+			<div>
+				<a href="javascript:history.back()" class="back-btn">Regresar a Dashboard</a>
+				<a href="/logout" class="logout-btn">Cerrar Sesion</a>
+			</div>
+		</div>
 
-        <!-- Inventory Summary -->
-        <div class="inventory-summary">
-            <div class="summary-card">
-                <h3>Total Items</h3>
-                <p th:text="${totalItems ?: '0'}">150</p>
-            </div>
-            <div class="summary-card">
-                <h3>Total Weight (kg)</h3>
-                <p th:text="${totalWeight ?: '0'}">2500</p>
-            </div>
-            <div class="summary-card">
-                <h3>Low Stock Items</h3>
-                <p th:text="${lowStockItems ?: '0'}" style="color: #e74c3c;">5</p>
-            </div>
-        </div>
+		<!-- Inventory Summary -->
+		<div class="inventory-summary">
+			<div class="summary-card">
+				<h3>Total Items</h3>
+				<p th:text="${totalItems ?: '0'}">150</p>
+			</div>
+			<div class="summary-card">
+				<h3>Total Weight (kg)</h3>
+				<p th:text="${totalWeight ?: '0'}">2500</p>
+			</div>
+			<div class="summary-card">
+				<h3>Low Stock Items</h3>
+				<p th:text="${lowStockItems ?: '0'}" style="color: #e74c3c;">5</p>
+			</div>
+		</div>
 
-        <!-- Enhanced Filters -->
-        <div class="filters">
-            <div class="filters-grid">
-                <div class="filter-group">
-                    <label for="category">Category</label>
-                    <select id="category">
-                        <option value="">All Categories</option>
-                        <option value="paper">Paper</option>
-                        <option value="ink">Ink</option>
-                        <option value="chemicals">Chemicals</option>
-                        <option value="plates">Plates</option>
-                    </select>
-                </div>
+		<!-- Enhanced Filters -->
+		<div class="filters">
+			<div class="filters-grid">
+				<div class="filter-group">
+					<label for="category">Category</label>
+					<select id="category">
+						<option value="">All Categories</option>
+						<option value="paper">Paper</option>
+						<option value="ink">Ink</option>
+						<option value="chemicals">Chemicals</option>
+						<option value="plates">Plates</option>
+					</select>
+				</div>
 
-                <div class="filter-group">
-                    <label for="receiptCode">Receipt Code</label>
-                    <input type="text" id="receiptCode" placeholder="Enter receipt code">
-                </div>
+				<div class="filter-group">
+					<label for="receiptCode">Receipt Code</label>
+					<input type="text" id="receiptCode" placeholder="Enter receipt code">
+				</div>
 
-                <div class="filter-group">
-                    <label for="quality">Quality</label>
-                    <select id="quality">
-                        <option value="">All Qualities</option>
-                        <option value="premium">Premium</option>
-                        <option value="standard">Standard</option>
-                        <option value="economy">Economy</option>
-                    </select>
-                </div>
+				<div class="filter-group">
+					<label for="quality">Quality</label>
+					<select id="quality">
+						<option value="">All Qualities</option>
+						<option value="premium">Premium</option>
+						<option value="standard">Standard</option>
+						<option value="economy">Economy</option>
+					</select>
+				</div>
 
-                <div class="filter-group">
-                    <label for="paperWeight">Paper Weight (g/m²)</label>
-                    <select id="paperWeight">
-                        <option value="">All Weights</option>
-                        <option value="80">80 g/m²</option>
-                        <option value="90">90 g/m²</option>
-                        <option value="115">115 g/m²</option>
-                        <option value="135">135 g/m²</option>
-                        <option value="150">150 g/m²</option>
-                        <option value="170">170 g/m²</option>
-                        <option value="200">200 g/m²</option>
-                        <option value="250">250 g/m²</option>
-                        <option value="300">300 g/m²</option>
-                    </select>
-                </div>
+				<div class="filter-group">
+					<label for="paperWeight">Paper Weight (g/m²)</label>
+					<select id="paperWeight">
+						<option value="">All Weights</option>
+						<option value="80">80 g/m²</option>
+						<option value="90">90 g/m²</option>
+						<option value="115">115 g/m²</option>
+						<option value="135">135 g/m²</option>
+						<option value="150">150 g/m²</option>
+						<option value="170">170 g/m²</option>
+						<option value="200">200 g/m²</option>
+						<option value="250">250 g/m²</option>
+						<option value="300">300 g/m²</option>
+					</select>
+				</div>
 
-                <div class="filter-group">
-                    <label>Dimensions (mm)</label>
-                    <div class="dimension-group">
-                        <input type="number" id="width" placeholder="Width">
-                        <input type="number" id="height" placeholder="Height">
-                    </div>
-                </div>
+				<div class="filter-group">
+					<label>Dimensions (mm)</label>
+					<div class="dimension-group">
+						<input type="number" id="width" placeholder="Width">
+						<input type="number" id="height" placeholder="Height">
+					</div>
+				</div>
 
-                <div class="filter-group">
-                    <label for="status">Status</label>
-                    <select id="status">
-                        <option value="">All Status</option>
-                        <option value="in_stock">In Stock</option>
-                        <option value="low_stock">Low Stock</option>
-                        <option value="out_of_stock">Out of Stock</option>
-                    </select>
-                </div>
-            </div>
+				<div class="filter-group">
+					<label for="status">Status</label>
+					<select id="status">
+						<option value="">All Status</option>
+						<option value="in_stock">In Stock</option>
+						<option value="low_stock">Low Stock</option>
+						<option value="out_of_stock">Out of Stock</option>
+					</select>
+				</div>
+			</div>
 
-            <div class="filter-buttons">
-                <button onclick="applyFilters()" class="filter-btn apply-btn">Apply Filters</button>
-                <button onclick="resetFilters()" class="filter-btn reset-btn">Reset</button>
-            </div>
-        </div>
+			<div class="filter-buttons">
+				<button onclick="applyFilters()" class="filter-btn apply-btn">Apply Filters</button>
+				<button onclick="resetFilters()" class="filter-btn reset-btn">Reset</button>
+			</div>
+		</div>
 
-        <!-- Inventory Table -->
-        <table class="inventory-table">
-            <thead>
-                <tr>
-                    <th>Receipt Code</th>
-                    <th>Item Code</th>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Quality</th>
-                    <th>Weight (g/m²)</th>
-                    <th>Dimensions (mm)</th>
-                    <th>Quantity</th>
-                    <th>Unit</th>
-                    <th>Location</th>
-                    <th>Status</th>
-                    <th>Last Updated</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="item : ${inventoryItems}">
-                    <td th:text="${item.receiptCode}">REC001</td>
-                    <td th:text="${item.itemCode}">PAP001</td>
-                    <td th:text="${item.name}">Offset Paper</td>
-                    <td th:text="${item.category}">Paper</td>
-                    <td th:text="${item.quality}">Premium</td>
-                    <td th:text="${item.paperWeight}">90</td>
-                    <td th:text="${item.width + ' x ' + item.height}">700 x 1000</td>
-                    <td th:text="${item.quantity}">500</td>
-                    <td th:text="${item.unit}">Sheets</td>
-                    <td th:text="${item.location}">Rack A-1</td>
-                    <td>
-                        <span th:class="${'status ' + (item.status == 'LOW_STOCK' ? 'status-low' : 'status-ok')}"
-                              th:text="${item.status}">In Stock</span>
-                    </td>
-                    <td th:text="${#temporals.format(item.lastUpdated, 'yyyy-MM-dd')}">2024-01-20</td>
-                    <td class="table-actions">
-                        <a th:href="@{'/warehouse/inventory/' + ${item.id}}" class="action-btn view-btn">View</a>
-                        <a th:if="${#authorization.expression('hasAnyRole(''ADMIN'', ''WAREHOUSE'')')}"
-                           th:href="@{'/warehouse/inventory/' + ${item.id} + '/edit'}" 
-                           class="action-btn edit-btn">Edit</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+		<!-- Inventory Table -->
+		<table class="inventory-table">
+			<thead>
+				<tr>
+					<th>Receipt Code</th>
+					<th>Item Code</th>
+					<th>Name</th>
+					<th>Category</th>
+					<th>Quality</th>
+					<th>Weight (g/m²)</th>
+					<th>Dimensions (mm)</th>
+					<th>Quantity</th>
+					<th>Unit</th>
+					<th>Location</th>
+					<th>Status</th>
+					<th>Last Updated</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="item : ${inventoryItems}">
+					<td th:text="${item.receiptCode}">REC001</td>
+					<td th:text="${item.itemCode}">PAP001</td>
+					<td th:text="${item.name}">Offset Paper</td>
+					<td th:text="${item.category}">Paper</td>
+					<td th:text="${item.quality}">Premium</td>
+					<td th:text="${item.paperWeight}">90</td>
+					<td th:text="${item.width + ' x ' + item.height}">700 x 1000</td>
+					<td th:text="${item.quantity}">500</td>
+					<td th:text="${item.unit}">Sheets</td>
+					<td th:text="${item.location}">Rack A-1</td>
+					<td>
+						<span th:class="${'status ' + (item.status == 'LOW_STOCK' ? 'status-low' : 'status-ok')}"
+							th:text="${item.status}">In Stock</span>
+					</td>
+					<td th:text="${#temporals.format(item.lastUpdated, 'yyyy-MM-dd')}">2024-01-20</td>
+					<td class="table-actions">
+						<a th:href="@{'/warehouse/inventory/' + ${item.id}}" class="action-btn view-btn">View</a>
+						<a th:if="${#authorization.expression('hasAnyRole(''ADMIN'', ''WAREHOUSE'')')}"
+							th:href="@{'/warehouse/inventory/' + ${item.id} + '/edit'}"
+							class="action-btn edit-btn">Edit</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 
-    <script>
-    function applyFilters() {
-        const filters = {
-            category: document.getElementById('category').value,
-            receiptCode: document.getElementById('receiptCode').value,
-            quality: document.getElementById('quality').value,
-            paperWeight: document.getElementById('paperWeight').value,
-            width: document.getElementById('width').value,
-            height: document.getElementById('height').value,
-            status: document.getElementById('status').value
-        };
+	<script>
+		function applyFilters() {
+			const filters = {
+				category: document.getElementById('category').value,
+				receiptCode: document.getElementById('receiptCode').value,
+				quality: document.getElementById('quality').value,
+				paperWeight: document.getElementById('paperWeight').value,
+				width: document.getElementById('width').value,
+				height: document.getElementById('height').value,
+				status: document.getElementById('status').value
+			};
 
-        // Send filters to backend
-        fetch('/api/inventory/filter', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(filters)
-        })
-        .then(response => response.json())
-        .then(data => updateTable(data))
-        .catch(error => console.error('Error:', error));
-    }
+			// Send filters to backend
+			fetch('/api/inventory/filter', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(filters)
+			})
+				.then(response => response.json())
+				.then(data => updateTable(data))
+				.catch(error => console.error('Error:', error));
+		}
 
-    function resetFilters() {
-        // Reset all filter inputs
-        document.getElementById('category').value = '';
-        document.getElementById('receiptCode').value = '';
-        document.getElementById('quality').value = '';
-        document.getElementById('paperWeight').value = '';
-        document.getElementById('width').value = '';
-        document.getElementById('height').value = '';
-        document.getElementById('status').value = '';
+		function resetFilters() {
+			// Reset all filter inputs
+			document.getElementById('category').value = '';
+			document.getElementById('receiptCode').value = '';
+			document.getElementById('quality').value = '';
+			document.getElementById('paperWeight').value = '';
+			document.getElementById('width').value = '';
+			document.getElementById('height').value = '';
+			document.getElementById('status').value = '';
 
-        // Reload all inventory items
-        applyFilters();
-    }
+			// Reload all inventory items
+			applyFilters();
+		}
 
-    function updateTable(data) {
-        const tbody = document.querySelector('.inventory-table tbody');
-        tbody.innerHTML = '';
+		function updateTable(data) {
+			const tbody = document.querySelector('.inventory-table tbody');
+			tbody.innerHTML = '';
 
-        data.forEach(item => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
+			data.forEach(item => {
+				const row = document.createElement('tr');
+				row.innerHTML = `
                 <td>${item.receiptCode}</td>
                 <td>${item.itemCode}</td>
                 <td>${item.name}</td>
@@ -287,9 +302,10 @@
                     ${hasEditPermission ? `<a href="/warehouse/inventory/${item.id}/edit" class="action-btn edit-btn">Edit</a>` : ''}
                 </td>
             `;
-            tbody.appendChild(row);
-        });
-    }
-    </script>
+				tbody.appendChild(row);
+			});
+		}
+	</script>
 </body>
+
 </html>

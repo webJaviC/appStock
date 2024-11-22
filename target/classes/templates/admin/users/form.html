@@ -57,23 +57,24 @@
 </head>
 
 <body>
+	<div th:replace="fragments/nav :: nav"></div>
 	<div class="form-container">
 
 		<h1 th:text="${user.id == null ? 'Create User' : 'Edit User'}"></h1>
-		
-		
+
+
 
 		<form th:action="@{${user.id == null ? '/admin/users/create' : '/admin/users/' + user.id + '/edit'}}"
 			th:object="${user}" method="post">
 
 			<div class="form-group">
-				<label for="username">Username:</label>
+				<label for="username">Usuario:</label>
 				<input type="text" id="username" th:field="*{username}" required>
 				<span class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
 			</div>
 
 			<div class="form-group">
-				<label for="password">Password:</label>
+				<label for="password">Contraseña:</label>
 				<input type="password" id="password" th:field="*{password}" th:required="${user.id == null}">
 				<span class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
 			</div>

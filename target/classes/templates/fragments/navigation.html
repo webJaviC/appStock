@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-    <meta charset="UTF-8">
+	<meta charset="UTF-8">
 </head>
+
 <body>
-    <div th:fragment="dashboard-button" class="header-actions">
-        <a href="#" 
-           th:href="@{${#authorization.expression('hasRole(''ADMIN'')') ? '/dashboard/admin' : 
+	<div th:fragment="dashboard-button" class="header-actions">
+		<a href="#" th:href="@{${#authorization.expression('hasRole(''ADMIN'')') ? '/dashboard/admin' : 
                       #authorization.expression('hasRole(''PRODUCTION'')') ? '/dashboard/production' : 
                       #authorization.expression('hasRole(''WAREHOUSE'')') ? '/dashboard/warehouse' : '/dashboard'}}"
-           class="btn btn-secondary">Back to Dashboard</a>
-    </div>
+			class="btn btn-secondary">Back to Dashboard</a>
+	</div>
 </body>
+
 </html>

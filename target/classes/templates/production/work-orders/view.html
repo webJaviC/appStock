@@ -1,87 +1,124 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>View Work Order - Print Shop Inventory System</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-        .details { margin-bottom: 30px; }
-        .details dt { font-weight: bold; margin-top: 10px; }
-        .details dd { margin-left: 0; margin-bottom: 5px; }
-        .table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .table th, .table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        .table th { background-color: #f8f9fa; }
-        .btn {
-            padding: 8px 16px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            display: inline-block;
-        }
-        .btn-danger { background-color: #dc3545; }
-        .material-form {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-        }
-    </style>
+	<title>View Work Order - Print Shop Inventory System</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 20px;
+		}
+
+		.details {
+			margin-bottom: 30px;
+		}
+
+		.details dt {
+			font-weight: bold;
+			margin-top: 10px;
+		}
+
+		.details dd {
+			margin-left: 0;
+			margin-bottom: 5px;
+		}
+
+		.table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 20px;
+		}
+
+		.table th,
+		.table td {
+			padding: 12px;
+			text-align: left;
+			border-bottom: 1px solid #ddd;
+		}
+
+		.table th {
+			background-color: #f8f9fa;
+		}
+
+		.btn {
+			padding: 8px 16px;
+			background-color: #007bff;
+			color: white;
+			text-decoration: none;
+			border-radius: 4px;
+			border: none;
+			cursor: pointer;
+			display: inline-block;
+		}
+
+		.btn-danger {
+			background-color: #dc3545;
+		}
+
+		.material-form {
+			margin-top: 20px;
+			padding: 20px;
+			background-color: #f8f9fa;
+			border-radius: 4px;
+		}
+	</style>
 </head>
+
 <body>
-    <h1>Detalle Hojas de Ruta</h1>
-    
-    <dl class="details">
-        <dt>Numero:</dt>
-        <dd th:text="${workOrder.routeNumber}"></dd>
-        
-        <dt>Cod. Cliente:</dt>
-        <dd th:text="${workOrder.customerNumber}"></dd>
-        
-        <dt>Cod. Producto:</dt>
-        <dd th:text="${workOrder.productNumber}"></dd>
-        
-        <dt>Descripcion:</dt>
-        <dd th:text="${workOrder.description}"></dd>
-        
-        <dt>KG Requeridos:</dt>
-        <dd th:text="${workOrder.requiredWeight + ' kg'}"></dd>
-        
-        <dt>Dimensiones:</dt>
-        <dd th:text="${workOrder.width + ' x ' + workOrder.length + ' cm'}"></dd>
-        
-        <dt>Estado:</dt>
-        <dd th:text="${workOrder.status}"></dd>
-    </dl>
-    
-    <h2>Asignar Material</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Orden #</th>
-                <th>Codigo Material</th>
-                <th>Calidad</th>
-                <th>Gramaje</th>
-                <th>Kg Netos</th>
-                <th>Dimensiones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="assignment : ${workOrder.materialAssignments}">
-                <td th:text="${assignment.orderNumber}"></td>
-                <td th:text="${assignment.material.code}"></td>
-                <td th:text="${assignment.material.quality.name}"></td>
-                <td th:text="${assignment.material.weight.name}"></td>
-                <td th:text="${assignment.updatedNetWeight}"></td>
-                <td th:text="${assignment.material.width + ' x ' + assignment.material.length}"></td>
-            </tr>
-        </tbody>
-    </table>
-    
-    <!--<div class="material-form" th:if="${workOrder.status == T(com.printshop.model.WorkOrderStatus).OPEN}">
+	<div th:replace="fragments/nav :: nav"></div>
+	<h1>Detalle Hojas de Ruta</h1>
+
+	<dl class="details">
+		<dt>Numero:</dt>
+		<dd th:text="${workOrder.routeNumber}"></dd>
+
+		<dt>Cod. Cliente:</dt>
+		<dd th:text="${workOrder.customerNumber}"></dd>
+
+		<dt>Cod. Producto:</dt>
+		<dd th:text="${workOrder.productNumber}"></dd>
+
+		<dt>Descripcion:</dt>
+		<dd th:text="${workOrder.description}"></dd>
+
+		<dt>KG Requeridos:</dt>
+		<dd th:text="${workOrder.requiredWeight + ' kg'}"></dd>
+
+		<dt>Dimensiones:</dt>
+		<dd th:text="${workOrder.width + ' x ' + workOrder.length + ' cm'}"></dd>
+
+		<dt>Estado:</dt>
+		<dd th:text="${workOrder.status}"></dd>
+	</dl>
+
+	<h2>Asignar Material</h2>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Orden #</th>
+				<th>Codigo Material</th>
+				<th>Calidad</th>
+				<th>Gramaje</th>
+				<th>Kg Netos</th>
+				<th>Dimensiones</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="assignment : ${workOrder.materialAssignments}">
+				<td th:text="${assignment.orderNumber}"></td>
+				<td th:text="${assignment.material.code}"></td>
+				<td th:text="${assignment.material.quality.name}"></td>
+				<td th:text="${assignment.material.weight.name}"></td>
+				<td th:text="${assignment.updatedNetWeight}"></td>
+				<td th:text="${assignment.material.width + ' x ' + assignment.material.length}"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<!--<div class="material-form" th:if="${workOrder.status == T(com.printshop.model.WorkOrderStatus).OPEN}">
         <h3>Assign Material</h3>
         <form th:action="@{/production/work-orders/{id}/assign-material(id=${workOrder.id})}" method="post">
             <div class="form-group">
@@ -103,4 +140,5 @@
         </form>
     </div>-->
 </body>
+
 </html>

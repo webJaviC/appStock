@@ -105,11 +105,12 @@
     </style>
 </head>
 <body>
+	<div th:replace="fragments/nav :: nav"></div>
     <div class="header-actions">
         <h1>Detalle de Hoja de Ruta</h1>
         <div>
             <a href="/production/work-orders/closed" class="btn btn-secondary">← Volver a órdenes cerradas</a>
-            <div th:replace="fragments/navigation :: dashboard-button"></div>
+            
         </div>
     </div>
 

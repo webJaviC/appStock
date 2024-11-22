@@ -1,391 +1,416 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>Work Order Details - Warehouse</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
-        .details {
-            margin-bottom: 30px;
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 4px;
-        }
-        .details dt {
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        .details dd {
-            margin-left: 0;
-            margin-bottom: 5px;
-        }
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .table th, .table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        .table th {
-            background-color: #f8f9fa;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .btn {
-            padding: 8px 16px;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 5px;
-        }
-        .btn-primary { background-color: #007bff; }
-        .btn-danger { background-color: #dc3545; }
-        .btn-success { background-color: #28a745; }
-        .scanner-container {
-            margin: 20px 0;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            text-align: center;
-        }
-        #reader {
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .scanner-options {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        #scannerStatus {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 4px;
-            display: none;
-        }
-        .status-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .status-error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        .assignment-actions {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .assignment-input {
-            width: 100px;
-        }
-    </style>
+	<title>Work Order Details - Warehouse</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="_csrf" th:content="${_csrf.token}" />
+	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+	<script src="https://unpkg.com/html5-qrcode"></script>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 20px;
+		}
+
+		.details {
+			margin-bottom: 30px;
+			background-color: #f8f9fa;
+			padding: 20px;
+			border-radius: 4px;
+		}
+
+		.details dt {
+			font-weight: bold;
+			margin-top: 10px;
+		}
+
+		.details dd {
+			margin-left: 0;
+			margin-bottom: 5px;
+		}
+
+		.table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 20px;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		}
+
+		.table th,
+		.table td {
+			padding: 12px;
+			text-align: left;
+			border-bottom: 1px solid #ddd;
+		}
+
+		.table th {
+			background-color: #f8f9fa;
+		}
+
+		.form-group {
+			margin-bottom: 15px;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 5px;
+		}
+
+		input {
+			width: 100%;
+			padding: 8px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			box-sizing: border-box;
+		}
+
+		.btn {
+			padding: 8px 16px;
+			color: white;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			margin: 5px;
+		}
+
+		.btn-primary {
+			background-color: #007bff;
+		}
+
+		.btn-danger {
+			background-color: #dc3545;
+		}
+
+		.btn-success {
+			background-color: #28a745;
+		}
+
+		.scanner-container {
+			margin: 20px 0;
+			padding: 20px;
+			background-color: #f8f9fa;
+			border-radius: 4px;
+			text-align: center;
+		}
+
+		#reader {
+			width: 100%;
+			max-width: 600px;
+			margin: 0 auto;
+		}
+
+		.scanner-options {
+			display: flex;
+			justify-content: center;
+			gap: 10px;
+			margin-bottom: 20px;
+		}
+
+		#scannerStatus {
+			margin-top: 10px;
+			padding: 10px;
+			border-radius: 4px;
+			display: none;
+		}
+
+		.status-success {
+			background-color: #d4edda;
+			color: #155724;
+		}
+
+		.status-error {
+			background-color: #f8d7da;
+			color: #721c24;
+		}
+
+		.assignment-actions {
+			display: flex;
+			gap: 10px;
+			align-items: center;
+		}
+
+		.assignment-input {
+			width: 100px;
+		}
+	</style>
 </head>
+
 <body>
-    <input type="hidden" id="workOrderId" th:value="${workOrder.id}">
+	<div th:replace="fragments/nav :: nav"></div>
+	<input type="hidden" id="workOrderId" th:value="${workOrder.id}">
 
-    <div class="details">
-        <dl>
-            <dt>Numero:</dt>
-            <dd th:text="${workOrder.routeNumber}"></dd>
-            <dt>Cod. Cliente:</dt>
-            <dd th:text="${workOrder.customerNumber}"></dd>
-            <dt>Cod. Producto:</dt>
-            <dd th:text="${workOrder.productNumber}"></dd>
-            <dt>KG Requeridos:</dt>
-            <dd th:text="${workOrder.requiredWeight + ' kg'}"></dd>
-            <dt>Estado:</dt>
-            <dd th:text="${workOrder.status}"></dd>
-        </dl>
-    </div>
+	<div class="details">
+		<dl>
+			<dt>Numero:</dt>
+			<dd th:text="${workOrder.routeNumber}"></dd>
+			<dt>Cod. Cliente:</dt>
+			<dd th:text="${workOrder.customerNumber}"></dd>
+			<dt>Cod. Producto:</dt>
+			<dd th:text="${workOrder.productNumber}"></dd>
+			<dt>KG Requeridos:</dt>
+			<dd th:text="${workOrder.requiredWeight + ' kg'}"></dd>
+			<dt>Estado:</dt>
+			<dd th:text="${workOrder.status}"></dd>
+		</dl>
+	</div>
 
-    <div th:if="${workOrder.status == T(com.printshop.model.WorkOrderStatus).OPEN}" class="scanner-container">
-    <h3>Scan Material</h3>
-    <div class="scanner-options">
-        <button id="cameraButton" class="btn btn-primary" onclick="startCameraScanner()" style="display: none;">
-            Usar Camara
-        </button>
-        <button id="manualButton" class="btn btn-primary" onclick="focusManualInput()">
-           Ingreso Manual
-        </button>
-    </div>
-    <div id="reader" style="display: none;"></div>
-    <input type="text" id="barcodeInput" placeholder="Scan or enter material code"
-           onkeypress="handleBarcodeInput(event)">
-    <div id="scannerStatus"></div>
-</div>
+	<div th:if="${workOrder.status == T(com.printshop.model.WorkOrderStatus).OPEN}" class="scanner-container">
+		<h3>Escanear Codigo de Barras</h3>
+		<div class="scanner-options">
+			<button id="cameraButton" class="btn btn-primary" onclick="startCameraScanner()" style="display: none;">
+				Usar Camara
+			</button>
+			<button id="manualButton" class="btn btn-primary" onclick="focusManualInput()">
+				Ingreso Manual
+			</button>
+		</div>
+		<div id="reader" style="display: none;"></div>
+		<input type="text" id="barcodeInput" placeholder="Scan or enter material code"
+			onkeypress="handleBarcodeInput(event)">
+		<div id="scannerStatus"></div>
+	</div>
 
-    <h2>Asignar Material</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Codigo</th>
-                <th>Calidad</th>
-                <th>Gramaje</th>
-                <th>KG Netos</th>
-                <th>Orden #</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="assignment : ${workOrder.materialAssignments}">
-                <td th:text="${assignment.material.code}"></td>
-                <td th:text="${assignment.material.quality.name}"></td>
-                <td th:text="${assignment.material.weight.name}"></td>
-                <td>
-                    <input th:if="${!assignment.ordered}" type="number" 
-                           th:id="'netWeight-' + ${assignment.id}"
-                           th:value="${assignment.updatedNetWeight}"
-                           step="0.01" class="assignment-input">
-                    <span th:if="${assignment.ordered}" 
-                          th:text="${assignment.updatedNetWeight + ' kg'}"></span>
-                </td>
-                <td>
-                    <input th:if="${!assignment.ordered}" type="number" 
-                           th:id="'orderNumber-' + ${assignment.id}"
-                           th:value="${assignment.orderNumber}"
-                           class="assignment-input">
-                    <span th:if="${assignment.ordered}" 
-                          th:text="${assignment.orderNumber}"></span>
-                </td>
-                <td class="assignment-actions">
-                    <button th:if="${!assignment.ordered}" class="btn btn-success"
-                            th:onclick="'saveAssignment(' + ${assignment.id} + ')'">
-                        Guardar
-                    </button>
-                    <button th:if="${!assignment.ordered}" class="btn btn-danger"
-                            th:onclick="'removeAssignment(' + ${assignment.id} + ')'">
-                        Remover
-                    </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+	<h2>Asignar Material</h2>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Codigo</th>
+				<th>Calidad</th>
+				<th>Gramaje</th>
+				<th>KG Netos</th>
+				<th>Orden #</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="assignment : ${workOrder.materialAssignments}">
+				<td th:text="${assignment.material.code}"></td>
+				<td th:text="${assignment.material.quality.name}"></td>
+				<td th:text="${assignment.material.weight.name}"></td>
+				<td>
+					<input th:if="${!assignment.ordered}" type="number" th:id="'netWeight-' + ${assignment.id}"
+						th:value="${assignment.updatedNetWeight}" step="0.01" class="assignment-input">
+					<span th:if="${assignment.ordered}" th:text="${assignment.updatedNetWeight + ' kg'}"></span>
+				</td>
+				<td>
+					<input th:if="${!assignment.ordered}" type="number" th:id="'orderNumber-' + ${assignment.id}"
+						th:value="${assignment.orderNumber}" class="assignment-input">
+					<span th:if="${assignment.ordered}" th:text="${assignment.orderNumber}"></span>
+				</td>
+				<td class="assignment-actions">
+					<button th:if="${!assignment.ordered}" class="btn btn-success"
+						th:onclick="'saveAssignment(' + ${assignment.id} + ')'">
+						Guardar
+					</button>
+					<button th:if="${!assignment.ordered}" class="btn btn-danger"
+						th:onclick="'removeAssignment(' + ${assignment.id} + ')'">
+						Remover
+					</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 
-    <div th:if="${workOrder.status == T(com.printshop.model.WorkOrderStatus).OPEN}" 
-         style="margin-top: 20px; text-align: right;">
-        <form th:action="@{/warehouse/work-orders/{id}/close(id=${workOrder.id})}" 
-              method="post" style="display: inline-block;"
-              onsubmit="return confirm('Are you sure you want to close this work order?')">
-            <button type="submit" class="btn btn-danger">Close Work Order</button>
-        </form>
-    </div>
+	<div th:if="${workOrder.status == T(com.printshop.model.WorkOrderStatus).OPEN}"
+		style="margin-top: 20px; text-align: right;">
+		<form th:action="@{/warehouse/work-orders/{id}/close(id=${workOrder.id})}" method="post"
+			style="display: inline-block;" onsubmit="return confirm('Are you sure you want to close this work order?')">
+			<button type="submit" class="btn btn-danger">Cerrar Hoja de Ruta</button>
+		</form>
+	</div>
 
-   <script th:inline="javascript">
-    let html5QrcodeScanner = null;
-    const csrfToken = /*[[${_csrf.token}]]*/ '';
-    const csrfHeader = /*[[${_csrf.headerName}]]*/ 'X-CSRF-TOKEN';
+	<script th:inline="javascript">
+		let html5QrcodeScanner = null;
+		const csrfToken = /*[[${_csrf.token}]]*/ '';
+		const csrfHeader = /*[[${_csrf.headerName}]]*/ 'X-CSRF-TOKEN';
 
-    function showStatus(message, isError = false) {
-        const statusDiv = document.getElementById('scannerStatus');
-        statusDiv.textContent = message;
-        statusDiv.style.display = 'block';
-        statusDiv.className = isError ? 'status-error' : 'status-success';
-        setTimeout(() => statusDiv.style.display = 'none', 3000);
-    }
+		function showStatus(message, isError = false) {
+			const statusDiv = document.getElementById('scannerStatus');
+			statusDiv.textContent = message;
+			statusDiv.style.display = 'block';
+			statusDiv.className = isError ? 'status-error' : 'status-success';
+			setTimeout(() => statusDiv.style.display = 'none', 3000);
+		}
 
-    async function processScannedCode(code) {
-        if (!code?.trim()) return;
+		async function processScannedCode(code) {
+			if (!code?.trim()) return;
 
-        try {
-            const workOrderId = document.getElementById('workOrderId').value;
-            const response = await fetch(`/warehouse/work-orders/${workOrderId}/reserve-material`, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    [csrfHeader]: csrfToken
-                },
-                body: `materialCode=${encodeURIComponent(code.trim())}`
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            showStatus(data.message, !data.success);
-            if (data.success) {
-                setTimeout(() => location.reload(), 1000);
-            }
-        } catch (error) {
-            showStatus('Error processing material: ' + error.message, true);
-            console.error('Error:', error);
-        }
-    }
+			try {
+				const workOrderId = document.getElementById('workOrderId').value;
+				const response = await fetch(`/warehouse/work-orders/${workOrderId}/reserve-material`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						[csrfHeader]: csrfToken
+					},
+					body: `materialCode=${encodeURIComponent(code.trim())}`
+				});
 
-    async function saveAssignment(assignmentId) {
-        const orderNumberInput = document.getElementById(`orderNumber-${assignmentId}`);
-        const netWeightInput = document.getElementById(`netWeight-${assignmentId}`);
-        
-        if (!orderNumberInput.value || !netWeightInput.value) {
-            showStatus('Please fill in both order number and net weight', true);
-            return;
-        }
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
 
-        try {
-            const response = await fetch(`/warehouse/assignments/${assignmentId}`, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    [csrfHeader]: csrfToken
-                },
-                body: `orderNumber=${encodeURIComponent(orderNumberInput.value)}&updatedNetWeight=${encodeURIComponent(netWeightInput.value)}`
-            });
+				const data = await response.json();
+				showStatus(data.message, !data.success);
+				if (data.success) {
+					setTimeout(() => location.reload(), 1000);
+				}
+			} catch (error) {
+				showStatus('Error processing material: ' + error.message, true);
+				console.error('Error:', error);
+			}
+		}
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+		async function saveAssignment(assignmentId) {
+			const orderNumberInput = document.getElementById(`orderNumber-${assignmentId}`);
+			const netWeightInput = document.getElementById(`netWeight-${assignmentId}`);
 
-            const data = await response.json();
-            showStatus(data.message, !data.success);
-            if (data.success) {
-                setTimeout(() => location.reload(), 1000);
-            }
-        } catch (error) {
-            showStatus('Error updating assignment: ' + error.message, true);
-            console.error('Error:', error);
-        }
-    }
+			if (!orderNumberInput.value || !netWeightInput.value) {
+				showStatus('Please fill in both order number and net weight', true);
+				return;
+			}
 
-    async function removeAssignment(assignmentId) {
-        if (!confirm('Are you sure you want to remove this material?')) return;
+			try {
+				const response = await fetch(`/warehouse/assignments/${assignmentId}`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						[csrfHeader]: csrfToken
+					},
+					body: `orderNumber=${encodeURIComponent(orderNumberInput.value)}&updatedNetWeight=${encodeURIComponent(netWeightInput.value)}`
+				});
 
-        try {
-            const response = await fetch(`/warehouse/assignments/${assignmentId}`, {
-                method: 'DELETE',
-                headers: {
-                    [csrfHeader]: csrfToken
-                }
-            });
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+				const data = await response.json();
+				showStatus(data.message, !data.success);
+				if (data.success) {
+					setTimeout(() => location.reload(), 1000);
+				}
+			} catch (error) {
+				showStatus('Error updating assignment: ' + error.message, true);
+				console.error('Error:', error);
+			}
+		}
 
-            const data = await response.json();
-            showStatus(data.message, !data.success);
-            if (data.success) {
-                setTimeout(() => location.reload(), 1000);
-            }
-        } catch (error) {
-            showStatus('Error removing assignment: ' + error.message, true);
-            console.error('Error:', error);
-        }
-    }
+		async function removeAssignment(assignmentId) {
+			if (!confirm('Are you sure you want to remove this material?')) return;
 
-    function handleBarcodeInput(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            const input = document.getElementById('barcodeInput');
-            processScannedCode(input.value);
-            input.value = '';
-        }
-    }
+			try {
+				const response = await fetch(`/warehouse/assignments/${assignmentId}`, {
+					method: 'DELETE',
+					headers: {
+						[csrfHeader]: csrfToken
+					}
+				});
 
-    function startCameraScanner() {
-        const reader = document.getElementById('reader');
-        const barcodeInput = document.getElementById('barcodeInput');
-        
-        reader.style.display = 'block';
-        barcodeInput.style.display = 'none';
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
 
-        if (html5QrcodeScanner) {
-            html5QrcodeScanner.clear();
-        }
+				const data = await response.json();
+				showStatus(data.message, !data.success);
+				if (data.success) {
+					setTimeout(() => location.reload(), 1000);
+				}
+			} catch (error) {
+				showStatus('Error removing assignment: ' + error.message, true);
+				console.error('Error:', error);
+			}
+		}
 
-        html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
-            fps: 10, 
-            qrbox: { width: 250, height: 250 },
-            aspectRatio: 1.0
-        });
+		function handleBarcodeInput(event) {
+			if (event.key === 'Enter') {
+				event.preventDefault();
+				const input = document.getElementById('barcodeInput');
+				processScannedCode(input.value);
+				input.value = '';
+			}
+		}
 
-        html5QrcodeScanner.render((decodedText) => {
-            processScannedCode(decodedText);
-            html5QrcodeScanner.clear();
-            reader.style.display = 'none';
-            barcodeInput.style.display = 'block';
-        }, (error) => {
-            // Handle scan error silently
-            console.warn('QR scan error:', error);
-        });
-    }
+		function startCameraScanner() {
+			const reader = document.getElementById('reader');
+			const barcodeInput = document.getElementById('barcodeInput');
 
-    function focusManualInput() {
-        if (html5QrcodeScanner) {
-            html5QrcodeScanner.clear();
-            document.getElementById('reader').style.display = 'none';
-        }
-        const barcodeInput = document.getElementById('barcodeInput');
-        barcodeInput.style.display = 'block';
-        barcodeInput.focus();
-    }
+			reader.style.display = 'block';
+			barcodeInput.style.display = 'none';
 
-    // Initialize barcode scanning on page load
-    document.addEventListener('DOMContentLoaded', () => {
-        let barcodeBuffer = '';
-        let lastKeyTime = 0;
-        const BARCODE_DELAY = 20; // Max delay between characters for barcode scanner
+			if (html5QrcodeScanner) {
+				html5QrcodeScanner.clear();
+			}
 
-        // Detect if device has a camera
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(function(stream) {
-                    // Camera is available
-                    document.getElementById('cameraButton').style.display = 'inline-block';
-                    stream.getTracks().forEach(track => track.stop());
-                })
-                .catch(function() {
-                    // No camera available - hide camera button
-                    document.getElementById('cameraButton').style.display = 'none';
-                });
-        }
+			html5QrcodeScanner = new Html5QrcodeScanner("reader", {
+				fps: 10,
+				qrbox: {width: 250, height: 250},
+				aspectRatio: 1.0
+			});
 
-        // Handle physical barcode scanner input
-        document.addEventListener('keypress', (e) => {
-            const currentTime = new Date().getTime();
-            
-            if (currentTime - lastKeyTime > BARCODE_DELAY) {
-                barcodeBuffer = '';
-            }
-            
-            if (e.key !== 'Enter') {
-                barcodeBuffer += e.key;
-            } else if (barcodeBuffer) {
-                processScannedCode(barcodeBuffer);
-                barcodeBuffer = '';
-            }
-            
-            lastKeyTime = currentTime;
-        });
-    });
-</script>
+			html5QrcodeScanner.render((decodedText) => {
+				processScannedCode(decodedText);
+				html5QrcodeScanner.clear();
+				reader.style.display = 'none';
+				barcodeInput.style.display = 'block';
+			}, (error) => {
+				// Handle scan error silently
+				console.warn('QR scan error:', error);
+			});
+		}
+
+		function focusManualInput() {
+			if (html5QrcodeScanner) {
+				html5QrcodeScanner.clear();
+				document.getElementById('reader').style.display = 'none';
+			}
+			const barcodeInput = document.getElementById('barcodeInput');
+			barcodeInput.style.display = 'block';
+			barcodeInput.focus();
+		}
+
+		// Initialize barcode scanning on page load
+		document.addEventListener('DOMContentLoaded', () => {
+			let barcodeBuffer = '';
+			let lastKeyTime = 0;
+			const BARCODE_DELAY = 20; // Max delay between characters for barcode scanner
+
+			// Detect if device has a camera
+			if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+				navigator.mediaDevices.getUserMedia({video: true})
+					.then(function (stream) {
+						// Camera is available
+						document.getElementById('cameraButton').style.display = 'inline-block';
+						stream.getTracks().forEach(track => track.stop());
+					})
+					.catch(function () {
+						// No camera available - hide camera button
+						document.getElementById('cameraButton').style.display = 'none';
+					});
+			}
+
+			// Handle physical barcode scanner input
+			document.addEventListener('keypress', (e) => {
+				const currentTime = new Date().getTime();
+
+				if (currentTime - lastKeyTime > BARCODE_DELAY) {
+					barcodeBuffer = '';
+				}
+
+				if (e.key !== 'Enter') {
+					barcodeBuffer += e.key;
+				} else if (barcodeBuffer) {
+					processScannedCode(barcodeBuffer);
+					barcodeBuffer = '';
+				}
+
+				lastKeyTime = currentTime;
+			});
+		});
+	</script>
 
 </body>
+
 </html>

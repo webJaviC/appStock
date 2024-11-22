@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<meta charset="UTF-8">
+</head>
+
+<body>
+	<nav th:fragment="nav">
+		<style>
+			.nav-container {
+				background-color: #2c3e50;
+				margin-bottom: 20px;
+				padding: 5px;
+				border-radius: 8px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			}
+
+			.nav-logo {
+				display: flex;
+				align-items: center;
+				text-decoration: none;
+				width: 150px;
+				color: white;
+			}
+
+			.nav-logo img {
+				width: 120px;
+				height: 60px;
+				margin-right: 1rem;
+			}
+
+			.nav-logo span {
+				font-size: 1.5rem;
+				font-weight: bold;
+			}
+
+			.nav-links {
+				display: flex;
+				gap: 1.5rem;
+				align-items: center;
+			}
+
+			.nav-link {
+				color: white;
+				text-decoration: none;
+				padding: 0.5rem 1rem;
+				border-radius: 4px;
+				transition: background-color 0.2s;
+			}
+
+			.nav-link:hover {
+				background-color: #34495e;
+			}
+
+			.nav-user {
+				display: flex;
+				align-items: center;
+				gap: 1rem;
+				color: white;
+			}
+
+			.logout-btn {
+				background-color: #e74c3c;
+				color: white;
+				padding: 0.5rem 1rem;
+				border-radius: 4px;
+				text-decoration: none;
+				transition: background-color 0.2s;
+			}
+
+			.logout-btn:hover {
+				background-color: #c0392b;
+			}
+		</style>
+
+		<div class="nav-container">
+			<a href="/dashboard" class="nav-logo">
+				<img src="/images/scolnik.png" alt="Print Shop Logo">
+
+			</a>
+
+			<div class="nav-links">
+				<div sec:authorize="hasAnyRole('ADMIN', 'PRODUCTION')">
+					<a href="/production/work-orders" class="nav-link">Hojas de Ruta</a>
+					<a href="/production/receipts" class="nav-link">Remitos</a>
+				</div>
+				<div sec:authorize="hasAnyRole('ADMIN', 'PRODUCTION', 'WAREHOUSE')">
+					<a href="/warehouse/inventory" class="nav-link">Inventario</a>
+					<a href="/warehouse/work-orders" class="nav-link">Hojas de Ruta Abiertas </a>
+				</div>
+				<div sec:authorize="hasRole('ADMIN')">
+					<a href="/admin/users" class="nav-link">Usuarios</a>
+				</div>
+			</div>
+
+			<div class="nav-user">
+				<span th:text="${#authentication.name}"></span>
+				<a href="/logout" class="logout-btn">cerrar sesion</a>
+			</div>
+		</div>
+	</nav>
+</body>
+
+</html>
