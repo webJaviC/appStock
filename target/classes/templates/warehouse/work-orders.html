@@ -89,10 +89,10 @@
 				<td th:text="${workOrder.width}"></td>
 				<td th:text="${workOrder.length}"></td>
 				<td th:text="${workOrder.materialAssignments.size()}"></td>
-				<td th:class="${workOrder.status == T(com.printshop.model.WorkOrderStatus).OPEN ? 'status-open' : 'status-closed'}"
+				<td th:class="${workOrder.status == T(com.printshop.model.WorkOrderStatus).ABIERTA ? 'status-open' : 'status-closed'}"
 					th:text="${workOrder.status}"></td>
 				<td>
-					<a th:if="${workOrder.status == T(com.printshop.model.WorkOrderStatus).OPEN}"
+					<a th:if="${workOrder.status == T(com.printshop.model.WorkOrderStatus).ABIERTA}"
 						th:href="@{/warehouse/work-orders/{id}(id=${workOrder.id})}" class="btn">Asignar Material</a>
 				</td>
 			</tr>

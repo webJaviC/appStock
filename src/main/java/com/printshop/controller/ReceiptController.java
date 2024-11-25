@@ -6,10 +6,14 @@ import com.printshop.service.ReceiptService;
 import com.printshop.service.ReceiptFileProcessor;
 import com.printshop.service.QualityService;
 import com.printshop.service.WeightService;
+
+
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 @Controller
@@ -19,6 +23,9 @@ public class ReceiptController {
     private final ReceiptFileProcessor receiptFileProcessor;
     private final QualityService qualityService;
     private final WeightService weightService;
+    
+    @Value("${printshop.receipts.import-directory}")
+    private String importDirectory;
 
     public ReceiptController(ReceiptService receiptService, 
                            ReceiptFileProcessor receiptFileProcessor,

@@ -61,13 +61,24 @@ public class InventoryController {
             .orElse(ResponseEntity.ok(new MaterialScanResponse(false, "Material not found", null)));
     }
     
-    @GetMapping("/updates")
+   /* @GetMapping("/updates")
     @PreAuthorize("hasAnyRole('ADMIN', 'PRODUCTION', 'WAREHOUSE')")
     public SseEmitter streamInventoryUpdates() {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         inventoryUpdateService.addEmitter(emitter);
         emitter.onCompletion(() -> inventoryUpdateService.removeEmitter(emitter));
         emitter.onTimeout(() -> inventoryUpdateService.removeEmitter(emitter));
+        return emitter;
+    }*/
+
+    @GetMapping("/updates")
+    public SseEmitter streamUpdates() {
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+        inventoryUpdateService.addEmitter(emitter);
+        
+        emitter.onCompletion(() -> inventoryUpdateService.removeEmitter(emitter));
+        emitter.onTimeout(() -> inventoryUpdateService.removeEmitter(emitter));
+        
         return emitter;
     }
 }

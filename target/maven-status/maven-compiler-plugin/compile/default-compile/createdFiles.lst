@@ -37,6 +37,7 @@ com\printshop\controller\AdminController.class
 com\printshop\config\SchedulingConfig.class
 com\printshop\model\Material$MaterialStatus.class
 com\printshop\model\Material.class
+com\printshop\db\DatabaseInitializer.class
 com\printshop\model\MaterialStatus.class
 com\printshop\repository\WeightRepository.class
 com\printshop\model\MaterialAssignment.class
