@@ -3,6 +3,8 @@ package com.printshop.model;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -15,6 +17,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "materials")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Material {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +41,6 @@ public class Material {
 
     @ManyToOne
     @JoinColumn(name = "receipt_id")
-    @JsonBackReference
     private Receipt receipt;
     
     @OneToMany(mappedBy = "material")
