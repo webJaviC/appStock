@@ -59,6 +59,9 @@
             border-radius: 4px;
             display: inline-block;
             transition: background-color 0.2s;
+            cursor: pointer;
+            border: none;
+            margin-right: 10px;
         }
         .btn-primary {
             background-color: #007bff;
@@ -72,6 +75,12 @@
         .btn-secondary:hover {
             background-color: #545b62;
         }
+        .btn-print {
+            background-color: #28a745;
+        }
+        .btn-print:hover {
+            background-color: #218838;
+        }
         .header-actions {
             display: flex;
             justify-content: space-between;
@@ -80,6 +89,7 @@
         }
         .receipt-group {
             margin-bottom: 30px;
+            page-break-inside: avoid;
         }
         .receipt-header {
             background-color: #f8f9fa;
@@ -102,15 +112,77 @@
             text-align: right;
             font-weight: bold;
         }
+        .print-header {
+            display: none;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .print-footer {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+                margin: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-header {
+                display: block;
+            }
+            .print-footer {
+                display: block;
+                position: fixed;
+                bottom: 20px;
+                width: 100%;
+            }
+            .details, .table-container {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                margin: 10px 0;
+            }
+            .table th {
+                background-color: #f8f9fa !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .receipt-header {
+                background-color: #f8f9fa !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .total-weight {
+                background-color: #e9ecef !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            @page {
+                margin: 2cm;
+            }
+        }
     </style>
 </head>
 <body>
-	<div th:replace="fragments/nav :: nav"></div>
-    <div class="header-actions">
+    <div class="print-header">
+        <h1>Print Shop - Hoja de Ruta</h1>
+        <p>Fecha de impresión: <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}"></span></p>
+    </div>
+
+    <div class="header-actions no-print">
         <h1>Detalle de Hoja de Ruta</h1>
         <div>
-            <a href="/production/work-orders/closed" class="btn btn-secondary">← Volver a órdenes cerradas</a>
-            
+            <button onclick="window.print()" class="btn btn-print">
+                🖨️ Imprimir
+            </button>
+            <a href="/production/work-orders/closed" class="btn btn-secondary">← Volver</a>
+            <div th:replace="fragments/navigation :: dashboard-button"></div>
         </div>
     </div>
 
@@ -170,6 +242,11 @@
             <span>Total KG Usados: </span>
             <span th:text="${#numbers.formatDecimal(totalWeightUsed, 1, 2) + ' kg'}"></span>
         </div>
+    </div>
+
+    <div class="print-footer">
+        <p>Documento generado por Print Shop Inventory System</p>
+        <p>Página 1</p>
     </div>
 </body>
 </html>

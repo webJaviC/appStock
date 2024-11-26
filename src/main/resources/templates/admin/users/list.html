@@ -63,7 +63,7 @@
 </head>
 
 <body>
-	<div th:replace="fragments/nav :: nav"></div>
+	<div th:replace="~{fragments/nav :: nav}"></div>
 	<h1>User Management</h1>
 
 	<a th:href="@{/admin/users/create}" class="btn btn-primary">Crear Nuevo Usuario</a>

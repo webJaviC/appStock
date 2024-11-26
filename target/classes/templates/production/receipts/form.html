@@ -54,7 +54,7 @@
 </head>
 
 <body>
-	<div th:replace="fragments/nav :: nav"></div>
+	<div th:replace="~{fragments/nav :: nav}"></div>
 	<h1>Create Receipt</h1>
 
 	<form th:action="@{/production/receipts/create}" th:object="${receipt}" method="post">

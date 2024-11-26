@@ -2,6 +2,8 @@ package com.printshop.model;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -36,6 +38,7 @@ public class Material {
 
     @ManyToOne
     @JoinColumn(name = "receipt_id")
+    @JsonBackReference
     private Receipt receipt;
     
     @OneToMany(mappedBy = "material")

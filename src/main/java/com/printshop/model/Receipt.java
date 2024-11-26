@@ -7,6 +7,8 @@ import java.util.Set;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Data
 @Entity
 @Table(name = "receipts")
@@ -25,6 +27,7 @@ public class Receipt {
     private String supplier;
 
     @OneToMany(mappedBy = "receipt", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Set<Material> materials;
 
 	public Long getId() {

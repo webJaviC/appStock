@@ -7,7 +7,9 @@ import com.printshop.model.Weight;
 import com.printshop.repository.QualityRepository;
 import com.printshop.repository.WeightRepository;
 
-
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.logging.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +21,10 @@ import java.io.InputStreamReader;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.DateTimeParseException;
-import java.util.HashSet;
-import java.util.Set;
+
+
+
+
 
 
 
@@ -52,13 +54,8 @@ public class ReceiptFileProcessor {
 
             // Extract receipt number and date from first line
             String receiptNumber = line.substring(145, 153);
-            String dateStr = line.substring(153, 163).trim();
-            DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-                .appendOptional(DateTimeFormatter.ofPattern("d/M/yyyy"))
-                .appendOptional(DateTimeFormatter.ofPattern("d/MM/yyyy"))
-                .appendOptional(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-                .toFormatter();
-
+            String dateStr = line.substring(154, 163).trim();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
             LocalDate date = LocalDate.parse(dateStr, formatter);
             String supplier = line.substring(0, 1);
 
@@ -89,9 +86,9 @@ public class ReceiptFileProcessor {
         double length = Double.parseDouble(line.substring(31, 35)) / 10.0; // Convert to cm
         double width = Double.parseDouble(line.substring(36, 39)) / 10.0; // Convert to cm
         double weight = Double.parseDouble(line.substring(12, 15));
-        double netWeight = Double.parseDouble(line.substring(89, 93));
-        double grossWeight = Double.parseDouble(line.substring(69, 73));
-        String qualityCode = line.substring(16, 17);
+        double netWeight = Double.parseDouble(line.substring(89, 93)) ;
+        double grossWeight = Double.parseDouble(line.substring(69, 73)) ;
+        String qualityCode = line.substring(16,17);
 
         // Set material properties
         material.setCode(code);
@@ -100,34 +97,41 @@ public class ReceiptFileProcessor {
         material.setNetWeight(netWeight);
         material.setGrossWeight(grossWeight);
 
-        // Get or create quality
-        Quality quality = getOrCreateQuality(qualityCode);
+     // Get or create quality
+        Quality quality;
+        if ("1".equals(qualityCode)) {
+            // Busca "DUPLEX" si el qualityCode es "1"
+            quality = qualityRepository.findByName("DUPLEX")
+                .orElseGet(() -> {
+                    Quality newQuality = new Quality();
+                    newQuality.setName("DUPLEX");
+                    return qualityRepository.save(newQuality);
+                });
+        } else {
+            // Busca "TRIPLEX" si el qualityCode no es "1"
+            quality = qualityRepository.findByName("TRIPLEX")
+                .orElseGet(() -> {
+                    Quality newQuality = new Quality();
+                    newQuality.setName("TRIPLEX");
+                    return qualityRepository.save(newQuality);
+                });
+        }
+
+
+        // Set quality to material
         material.setQuality(quality);
 
-        // Get or create weight
         String weightName = String.format("%.0f", weight);
-        Weight weightValue = getOrCreateWeight(weightName);
-        material.setWeight(weightValue);
-
-        return material;
-    }
-
-    private Quality getOrCreateQuality(String qualityCode) {
-        String qualityName = "1".equals(qualityCode) ? "DUPLEX" : "TRIPLEX";
-        return qualityRepository.findByName(qualityName)
-            .orElseGet(() -> {
-                Quality newQuality = new Quality();
-                newQuality.setName(qualityName);
-                return qualityRepository.save(newQuality);
-            });
-    }
-
-    private Weight getOrCreateWeight(String weightName) {
-        return weightRepository.findByName(weightName)
+        Weight weightValue = weightRepository.findByName(weightName)
             .orElseGet(() -> {
                 Weight newWeight = new Weight();
                 newWeight.setName(weightName);
                 return weightRepository.save(newWeight);
             });
+
+        // Set weight to material
+        material.setWeight(weightValue);
+
+        return material;
     }
 }

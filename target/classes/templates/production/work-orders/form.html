@@ -47,7 +47,7 @@
 
 <body>
 
-	<div th:replace="fragments/nav :: nav"></div>
+	<div th:replace="~{fragments/nav :: nav}"></div>
 	<h1>Crear HR</h1>
 
 	<form th:action="@{/production/work-orders/create}" th:object="${workOrder}" method="post">

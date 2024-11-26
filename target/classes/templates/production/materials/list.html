@@ -41,7 +41,7 @@
 </head>
 
 <body>
-	<div th:replace="fragments/nav :: nav"></div>
+	<div th:replace="~{fragments/nav :: nav}"></div>
 	<h1>Materiales</h1>
 
 	<a th:href="@{/production/materials/create}" class="btn">Agregar Nuevo Material</a>

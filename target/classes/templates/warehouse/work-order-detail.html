@@ -103,17 +103,19 @@
     </style>
 </head>
 <body>
+	
+	<div th:replace="~{fragments/nav :: nav}"></div>
     <input type="hidden" id="workOrderId" th:value="${workOrder.id}">
 
     <div class="details">
         <dl>
-            <dt>Route Number:</dt>
+            <dt>Hoja de Ruta Nro:</dt>
             <dd th:text="${workOrder.routeNumber}"></dd>
-            <dt>Customer Number:</dt>
+            <dt>Codigo Cliente :</dt>
             <dd th:text="${workOrder.customerNumber}"></dd>
-            <dt>Product Number:</dt>
+            <dt>Codigo Producto:</dt>
             <dd th:text="${workOrder.productNumber}"></dd>
-            <dt>Required Weight:</dt>
+            <dt>Gramaje:</dt>
             <dd th:text="${workOrder.requiredWeight + ' kg'}"></dd>
             <dt>Observaciones:</dt>
             <dd th:text="${workOrder.observaciones}"></dd>
@@ -121,10 +123,10 @@
     </div>
 
     <div class="scanner-container">
-        <h3>Scan Material Barcode</h3>
+        <h3>Asignar Material</h3>
         <div class="scanner-options">
-            <button class="btn btn-primary" onclick="startScanner()">Use Camera Scanner</button>
-            <button class="btn btn-primary" onclick="focusManualInput()">Manual Input</button>
+            <button class="btn btn-primary" onclick="startScanner()">Usar Escaner</button>
+            <button class="btn btn-primary" onclick="focusManualInput()">Entrada Manual</button>
         </div>
         <div id="interactive" class="viewport" style="display: none;"></div>
         <input type="text" id="barcodeInput" placeholder="Scan or enter material code"
@@ -135,12 +137,12 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Material Code</th>
-                <th>Quality</th>
-                <th>Weight</th>
-                <th>Net Weight</th>
-                <th>Order #</th>
-                <th>Actions</th>
+                <th>Codigo Material</th>
+                <th>Calidad</th>
+                <th>Gramaje</th>
+                <th>Kg Netos</th>
+                <th>Orden #</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -167,11 +169,11 @@
                 <td>
                     <button th:if="${!assignment.ordered}" class="btn btn-primary"
                             th:onclick="'saveAssignment(' + ${assignment.id} + ')'">
-                        Save
+                        Guardar
                     </button>
                     <button th:if="${!assignment.ordered}" class="btn btn-danger"
                             th:onclick="'removeAssignment(' + ${assignment.id} + ')'">
-                        Remove
+                        Remover
                     </button>
                 </td>
             </tr>

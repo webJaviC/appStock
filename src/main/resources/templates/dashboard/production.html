@@ -86,7 +86,7 @@
 </head>
 
 <body>
-	<div th:replace="fragments/nav :: nav"></div>
+	<div th:replace="~{fragments/nav :: nav}"></div>
 	<div class="header">
 		<h1>Producción Inicio</h1>
 		<div class="welcome-text">Bienvenido, <span th:text="${#authentication.name}"></span></div>

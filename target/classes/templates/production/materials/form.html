@@ -42,7 +42,7 @@
 </head>
 
 <body>
-	<div th:replace="fragments/nav :: nav"></div>
+	<div th:replace="~{fragments/nav :: nav}"></div>
 	<h1 th:text="${material.id == null ? 'Add New Material' : 'Edit Material'}"></h1>
 
 
