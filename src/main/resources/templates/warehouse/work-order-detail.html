@@ -179,6 +179,14 @@
             </tr>
         </tbody>
     </table>
+    
+     <div class="action-buttons">
+        <form th:action="@{/warehouse/work-orders/{id}/close(id=${workOrder.id})}" 
+              method="post" 
+              onsubmit="return confirm('¿Está seguro que desea cerrar esta hoja de ruta? Esta acción no se puede deshacer.');">
+            <button type="submit" class="btn btn-danger">Cerrar Hoja de Ruta</button>
+        </form>
+    </div>
 
     <script th:inline="javascript">
         let eventSource = null;
