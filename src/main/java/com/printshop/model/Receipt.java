@@ -3,6 +3,7 @@ package com.printshop.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,7 +15,6 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @Data
 @Entity
 @Table(name = "receipts")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Receipt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,8 +29,21 @@ public class Receipt {
     @Column(nullable = false)
     private String supplier;
 
+    /*@OneToMany(mappedBy = "receipt", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<Material> materials;*/
+    
     @OneToMany(mappedBy = "receipt", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Material> materials;
+    private Set<Material> materials = new HashSet<>();
+    
+    public void addMaterial(Material material) {
+        materials.add(material);
+        material.setReceipt(this);
+    }
+
+    public void removeMaterial(Material material) {
+        materials.remove(material);
+        material.setReceipt(null);
+    }
 
 	public Long getId() {
 		return id;

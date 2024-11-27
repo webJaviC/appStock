@@ -17,7 +17,6 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "materials")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Material {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +38,7 @@ public class Material {
     private Double width;
     private Double length;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "receipt_id")
     private Receipt receipt;
     
@@ -48,7 +47,7 @@ public class Material {
     
     @OneToMany(mappedBy = "material", fetch = FetchType.LAZY)
     private Set<MaterialAssignment> assig;
-
+    
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private MaterialStatus status = MaterialStatus.DISPONIBLE;
@@ -200,10 +199,41 @@ public class Material {
 	    }
 	}
 	
-	  public MaterialAssignment getCurrentAssignment() {
+	 /* public MaterialAssignment getCurrentAssignment() {
 	        if (assig != null && !assig.isEmpty()) {
 	            return assig.iterator().next();
 	        }
 	        return null;
-	    }
+	    }*/
+	 // Helper method to get the current assignment if any
+    public MaterialAssignment getCurrentAssignment() {
+        if (assignments != null && !assignments.isEmpty()) {
+            return assignments.iterator().next();
+        }
+        return null;
+    }
+
+    // Override equals and hashCode to prevent circular references
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Material)) return false;
+        Material material = (Material) o;
+        return code != null && code.equals(material.getCode());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    // Override toString to prevent circular references
+    @Override
+    public String toString() {
+        return "Material{" +
+               "id=" + id +
+               ", code='" + code + '\'' +
+               ", status=" + status +
+               '}';
+    }
 }
