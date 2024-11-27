@@ -62,6 +62,31 @@ public class WarehouseController {
             return ResponseEntity.ok(response);
         }
     }
+    
+    @PostMapping("/work-orders/{workOrderId}/assign-material")
+    public ResponseEntity<Map<String, Object>> assignMaterial(
+            @PathVariable Long workOrderId,
+            @RequestParam String materialCode,
+            @RequestParam(required = false) Integer orderNumber,
+            @RequestParam(required = false) Double updatedNetWeight) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            MaterialAssignment assignment = workOrderService.reserveMaterial(workOrderId, materialCode);
+            
+            if (orderNumber != null || updatedNetWeight != null) {
+                assignment = workOrderService.updateAssignment(assignment.getId(), orderNumber, updatedNetWeight);
+            }
+            
+            response.put("success", true);
+            response.put("message", "Material assigned successfully");
+            response.put("assignment", assignment);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.ok(response);
+        }
+    }
 
     @PostMapping("/assignments/{assignmentId}")
     @ResponseBody

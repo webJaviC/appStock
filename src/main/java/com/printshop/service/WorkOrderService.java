@@ -1,5 +1,4 @@
 package com.printshop.service;
-
 import com.printshop.model.WorkOrder;
 import com.printshop.model.Material;
 import com.printshop.model.MaterialAssignment;
@@ -67,17 +66,17 @@ public class WorkOrderService {
 
     public MaterialAssignment reserveMaterial(Long workOrderId, String materialCode) {
         WorkOrder workOrder = workOrderRepository.findById(workOrderId)
-            .orElseThrow(() -> new RuntimeException("Hoja de Ruta no encontrada"));
+            .orElseThrow(() -> new RuntimeException("Work order not found"));
         
         Material material = materialRepository.findByCode(materialCode)
-            .orElseThrow(() -> new RuntimeException("Material no encontrado con código: " + materialCode));
+            .orElseThrow(() -> new RuntimeException("Material not found with code: " + materialCode));
 
         // Check if material is already assigned to this work order
         boolean alreadyAssigned = workOrder.getMaterialAssignments().stream()
             .anyMatch(a -> a.getMaterial().getCode().equals(materialCode));
         
         if (alreadyAssigned) {
-            throw new RuntimeException("El material ya está asignado a esta Hoja de Ruta");
+            throw new RuntimeException("Material is already assigned to this work order");
         }
 
         // Reserve material using inventory service
@@ -97,7 +96,7 @@ public class WorkOrderService {
 
     public MaterialAssignment updateAssignment(Long assignmentId, Integer orderNumber, Double updatedNetWeight) {
         MaterialAssignment assignment = materialAssignmentRepository.findById(assignmentId)
-            .orElseThrow(() -> new RuntimeException("Asignación no encontrada"));
+            .orElseThrow(() -> new RuntimeException("Assignment not found"));
 
         if (orderNumber != null) {
             assignment.setOrderNumber(orderNumber);
@@ -113,7 +112,7 @@ public class WorkOrderService {
 
     public void removeAssignment(Long assignmentId) {
         MaterialAssignment assignment = materialAssignmentRepository.findById(assignmentId)
-            .orElseThrow(() -> new RuntimeException("Asignación no encontrada"));
+            .orElseThrow(() -> new RuntimeException("Assignment not found"));
 
         Material material = assignment.getMaterial();
         inventoryUpdateService.releaseMaterial(material);
@@ -128,17 +127,17 @@ public class WorkOrderService {
 
     public void closeWorkOrder(Long id) {
         WorkOrder workOrder = workOrderRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Hoja de ruta no encontrada"));
+            .orElseThrow(() -> new RuntimeException("Work order not found"));
 
         if (workOrder.getMaterialAssignments().isEmpty()) {
-            throw new RuntimeException("No se puede cerrar la Hoja de Ruta: No hay materiales asignados");
+            throw new RuntimeException("Cannot close work order: No materials assigned");
         }
 
         boolean allMaterialsOrdered = workOrder.getMaterialAssignments().stream()
             .allMatch(MaterialAssignment::isOrdered);
             
         if (!allMaterialsOrdered) {
-            throw new RuntimeException("No se puede cerrar la Hoja de Ruta: Algunos materiales no tienen un Nro de Orden asignado");
+            throw new RuntimeException("Cannot close work order: Some materials are not ordered");
         }
 
         // Process each material assignment using inventory service
