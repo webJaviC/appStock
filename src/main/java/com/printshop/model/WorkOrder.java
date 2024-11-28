@@ -3,6 +3,7 @@ package com.printshop.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -166,6 +167,18 @@ public class WorkOrder {
 		this.materialAssignments = materialAssignments;
 	}
     
+	@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof WorkOrder)) return false;
+        WorkOrder that = (WorkOrder) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
     
 }
 

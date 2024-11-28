@@ -148,10 +148,14 @@
 			<dd th:text="${workOrder.routeNumber}"></dd>
 			<dt>Cod. Cliente:</dt>
 			<dd th:text="${workOrder.customerNumber}"></dd>
+			<dt>Descripción:</dt>
+			<dd th:text="${workOrder.description}"></dd>
 			<dt>Cod. Producto:</dt>
 			<dd th:text="${workOrder.productNumber}"></dd>
 			<dt>KG Requeridos:</dt>
 			<dd th:text="${workOrder.requiredWeight + ' kg'}"></dd>
+			<dt>Dimensiones:</dt>
+			<dd th:text="${workOrder.width + ' x ' + workOrder.length}"></dd>
 			<dt>Estado:</dt>
 			<dd th:text="${workOrder.status}"></dd>
 		</dl>
@@ -232,18 +236,23 @@
 			statusDiv.textContent = message;
 			statusDiv.style.display = 'block';
 			statusDiv.className = isError ? 'status-error' : 'status-success';
-			setTimeout(() => statusDiv.style.display = 'none', 3000);
+			setTimeout(() => statusDiv.style.display = 'none', 1000);
 		}
 
 		async function processScannedCode(code) {
 			if (!code?.trim()) return;
 
+			
+			const workOrderId = document.getElementById('workOrderId').value;
+			
+			console.log("Scanned code: ", code); // Log the scanned code
+    console.log("Work Order ID: ", workOrderId); // Log the work order ID
 			try {
-				const workOrderId = document.getElementById('workOrderId').value;
+				
 				const response = await fetch(`/warehouse/work-orders/${workOrderId}/reserve-material`, {
 					method: 'POST',
 					headers: {
-						'Content-Type': 'application/x-www-form-urlencoded',
+					'Content-Type': 'application/x-www-form-urlencoded',
 						[csrfHeader]: csrfToken
 					},
 					body: `materialCode=${encodeURIComponent(code.trim())}`

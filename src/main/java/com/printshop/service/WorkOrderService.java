@@ -64,7 +64,7 @@ public class WorkOrderService {
         return weightRepository.findAll();
     }
 
-    public MaterialAssignment reserveMaterial(Long workOrderId, String materialCode) {
+   /*public MaterialAssignment reserveMaterial(Long workOrderId, String materialCode) {
         WorkOrder workOrder = workOrderRepository.findById(workOrderId)
             .orElseThrow(() -> new RuntimeException("Work order not found"));
         
@@ -92,11 +92,51 @@ public class WorkOrderService {
         
         inventoryUpdateService.sendUpdate(material);
         return savedAssignment;
+    }*/
+    public MaterialAssignment reserveMaterial(Long workOrderId, String materialCode) {
+        try {
+            WorkOrder workOrder = workOrderRepository.findById(workOrderId)
+                .orElseThrow(() -> new RuntimeException("Hoja de Ruta no encontrada"));
+            
+            Material material = materialRepository.findByCode(materialCode)
+                .orElseThrow(() -> new RuntimeException("Material no encontrado con codigo: " + materialCode));
+            
+         // Log the current status of the material
+            System.out.println("Current material status: " + material.getStatus());
+
+
+            // Check if material is already assigned to this work order
+            boolean alreadyAssigned = workOrder.getMaterialAssignments().stream()
+                .anyMatch(a -> a.getMaterial().getCode().equals(materialCode));
+            
+            if (alreadyAssigned) {
+                throw new RuntimeException("El material ya está asignado a esta Hoja de Ruta");
+            }
+
+            // Reserve material using inventory service
+            inventoryUpdateService.reserveMaterial(material);
+
+            MaterialAssignment assignment = new MaterialAssignment();
+            assignment.setWorkOrder(workOrder);
+            assignment.setMaterial(material);
+            assignment.setUpdatedNetWeight(material.getNetWeight());
+
+            workOrder.getMaterialAssignments().add(assignment);
+            MaterialAssignment savedAssignment = materialAssignmentRepository.save(assignment);
+            
+            inventoryUpdateService.sendUpdate(material);
+            return savedAssignment;
+
+        } catch (Exception e) {
+            // Log the exception (you can use a logger framework)
+            System.err.println("Error En reserveMaterial: " + e.getMessage());
+            throw new RuntimeException("Error al reservar material: " + e.getMessage());
+        }
     }
 
     public MaterialAssignment updateAssignment(Long assignmentId, Integer orderNumber, Double updatedNetWeight) {
         MaterialAssignment assignment = materialAssignmentRepository.findById(assignmentId)
-            .orElseThrow(() -> new RuntimeException("Assignment not found"));
+            .orElseThrow(() -> new RuntimeException("Asignación no encontrada"));
 
         if (orderNumber != null) {
             assignment.setOrderNumber(orderNumber);
@@ -112,7 +152,7 @@ public class WorkOrderService {
 
     public void removeAssignment(Long assignmentId) {
         MaterialAssignment assignment = materialAssignmentRepository.findById(assignmentId)
-            .orElseThrow(() -> new RuntimeException("Assignment not found"));
+            .orElseThrow(() -> new RuntimeException("Asignación no encontrada"));
 
         Material material = assignment.getMaterial();
         inventoryUpdateService.releaseMaterial(material);
@@ -127,17 +167,17 @@ public class WorkOrderService {
 
     public void closeWorkOrder(Long id) {
         WorkOrder workOrder = workOrderRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Work order not found"));
+            .orElseThrow(() -> new RuntimeException("Hoja de Ruta no encontrada"));
 
         if (workOrder.getMaterialAssignments().isEmpty()) {
-            throw new RuntimeException("Cannot close work order: No materials assigned");
+            throw new RuntimeException("No se puede cerrar la orden de trabajo: No hay materiales asignados");
         }
 
         boolean allMaterialsOrdered = workOrder.getMaterialAssignments().stream()
             .allMatch(MaterialAssignment::isOrdered);
             
         if (!allMaterialsOrdered) {
-            throw new RuntimeException("Cannot close work order: Some materials are not ordered");
+            throw new RuntimeException("No se puede cerrar la orden de trabajo: Algunos materiales no están ordenados");
         }
 
         // Process each material assignment using inventory service

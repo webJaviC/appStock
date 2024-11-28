@@ -79,6 +79,11 @@ public class InventoryUpdateService {
 
     @Transactional
     public void reserveMaterial(Material material) {
+    	if (material != null) {
+    	    System.out.println("Current material status: " + material.getStatus());
+    	} else {
+    	    System.out.println("Material is null");
+    	}
         switch (material.getStatus()) {
             case RESERVADO:
                 throw new IllegalStateException("El material ya está reservado para otra orden de trabajo");

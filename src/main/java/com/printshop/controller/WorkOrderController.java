@@ -76,7 +76,7 @@ public class WorkOrderController {
     @GetMapping("/closed/{id}")
     public String viewClosedWorkOrder(@PathVariable Long id, Model model) {
         WorkOrder workOrder = workOrderService.findById(id)
-            .orElseThrow(() -> new RuntimeException("Work order not found"));
+            .orElseThrow(() -> new RuntimeException("Hoja de Ruta no encontrada"));
 
         // Group assignments by receipt
         Map<Receipt, ReceiptMaterialSummary> materialsByReceipt = workOrder.getMaterialAssignments().stream()

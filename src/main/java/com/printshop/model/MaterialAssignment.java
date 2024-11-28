@@ -1,6 +1,9 @@
 package com.printshop.model;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -14,6 +17,7 @@ public class MaterialAssignment {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "work_order_id", nullable = false)
     private WorkOrder workOrder;
 
@@ -92,4 +96,16 @@ public class MaterialAssignment {
 	public void setOrdered(boolean ordered) {
 		this.ordered = ordered;
 	}
+	 @Override
+	    public boolean equals(Object o) {
+	        if (this == o) return true;
+	        if (!(o instanceof MaterialAssignment)) return false;
+	        MaterialAssignment that = (MaterialAssignment) o;
+	        return Objects.equals(id, that.id);
+	    }
+
+	    @Override
+	    public int hashCode() {
+	        return Objects.hash(id);
+	    }
 }

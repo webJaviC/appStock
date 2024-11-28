@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Inventory - Print Shop Inventory System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background-color: #f5f5f5;
+        }
+        .filters { 
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .filters input, .filters select {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .table-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .table { 
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .table th, .table td { 
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .table th { 
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+        .status-available { color: #28a745; }
+        .status-reserved { color: #ffc107; }
+        .status-used { color: #dc3545; }
+        .summary-panel {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .weight-total {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .weight-label {
+            color: #6c757d;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments/nav :: nav}"></div>
+
+    <div class="summary-panel">
+        <div class="weight-total">
+            <span class="weight-label">Total KG Disponibles:</span>
+            <span id="totalNetWeight" th:text="${#numbers.formatDecimal(totalAvailableWeight, 1, 2) + ' kg'}">0 kg</span>
+        </div>
+        <div class="weight-total">
+            <span class="weight-label">KG Filtrados:</span>
+            <span id="filteredNetWeight">0 kg</span>
+        </div>
+    </div>
+    
+    <div class="filters">
+        <input type="text" id="codeFilter" placeholder="Filtrar por código">
+        <select id="qualityFilter">
+            <option value="">Todas las Calidades</option>
+            <option th:each="quality : ${qualities}"
+                    th:value="${quality.name}"
+                    th:text="${quality.name}"></option>
+        </select>
+        <select id="weightFilter">
+            <option value="">Todos los Gramajes</option>
+            <option th:each="weight : ${weights}"
+                    th:value="${weight.name}"
+                    th:text="${weight.name}"></option>
+        </select>
+        <select id="statusFilter">
+            <option value="">Todos los Estados</option>
+            <option value="AVAILABLE">Disponible</option>
+            <option value="RESERVED">Reservado</option>
+            <option value="USED">Usado</option>
+        </select>
+    </div>
+    
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Calidad</th>
+                    <th>Gramaje</th>
+                    <th>KG Bruto</th>
+                    <th>KG Neto</th>
+                    <th>Dimensiones</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="material : ${materials}">
+                    <td th:text="${material.code}"></td>
+                    <td th:text="${material.quality.name}"></td>
+                    <td th:text="${material.weight.name}"></td>
+                    <td th:text="${#numbers.formatDecimal(material.grossWeight, 1, 2) + ' kg'}"></td>
+                    <td th:text="${#numbers.formatDecimal(material.netWeight, 1, 2) + ' kg'}"
+                        th:attr="data-weight=${material.netWeight}"></td>
+                    <td th:text="${material.width + ' x ' + material.length + ' cm'}"></td>
+                    <td th:class="${'status-' + #strings.toLowerCase(material.status)}"
+                        th:text="${material.status}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function calculateFilteredWeight() {
+            let totalWeight = 0;
+            const rows = document.querySelectorAll('.table tbody tr');
+            
+            rows.forEach(row => {
+                if (row.style.display !== 'none') {
+                    const weightCell = row.querySelector('td[data-weight]');
+                    if (weightCell) {
+                        totalWeight += parseFloat(weightCell.getAttribute('data-weight'));
+                    }
+                }
+            });
+            
+            document.getElementById('filteredNetWeight').textContent = 
+                totalWeight.toFixed(2) + ' kg';
+        }
+
+        function filterTable() {
+            const code = document.getElementById('codeFilter').value.toLowerCase();
+            const quality = document.getElementById('qualityFilter').value.toLowerCase();
+            const weight = document.getElementById('weightFilter').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            
+            const rows = document.querySelectorAll('.table tbody tr');
+            
+            rows.forEach(row => {
+                const materialCode = row.cells[0].textContent.toLowerCase();
+                const materialQuality = row.cells[1].textContent.toLowerCase();
+                const materialWeight = row.cells[2].textContent.toLowerCase();
+                const materialStatus = row.cells[6].textContent;
+                
+                const matchesCode = materialCode.includes(code);
+                const matchesQuality = quality === '' || materialQuality === quality;
+                const matchesWeight = weight === '' || materialWeight === weight;
+                const matchesStatus = status === '' || materialStatus === status;
+                
+                row.style.display = matchesCode && matchesQuality && matchesWeight && matchesStatus ? '' : 'none';
+            });
+
+            calculateFilteredWeight();
+        }
+
+        // Add event listeners to all filter inputs
+        document.getElementById('codeFilter').addEventListener('input', filterTable);
+        document.getElementById('qualityFilter').addEventListener('change', filterTable);
+        document.getElementById('weightFilter').addEventListener('change', filterTable);
+        document.getElementById('statusFilter').addEventListener('change', filterTable);
+
+        // Calculate initial filtered weight
+        calculateFilteredWeight();
+    </script>
+</body>
+</html>

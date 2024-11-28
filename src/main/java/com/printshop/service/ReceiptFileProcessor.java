@@ -300,7 +300,7 @@ public class ReceiptFileProcessor {
     }
 
     private Receipt createReceipt(String line) {
-        String receiptNumber = line.substring(116, 124).trim();
+        String receiptNumber = line.substring(145, 153).trim();
         if (receiptNumber.isEmpty()) {
             throw new IllegalArgumentException("Empty receipt number");
         }
