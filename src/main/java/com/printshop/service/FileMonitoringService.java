@@ -33,7 +33,7 @@ public class FileMonitoringService {
         File directory = new File(importDirectory);
         if (!directory.exists()) {
             directory.mkdirs();
-            logger.info("Created import directory: " + importDirectory);
+            logger.info("Directorio de importación creado: " + importDirectory);
         }
     }
 
@@ -51,7 +51,7 @@ public class FileMonitoringService {
 
     private void processFile(File file) {
         try {
-            logger.info("Processing file: " + file.getName());
+            logger.info("Procesando archivo: " + file.getName());
             
             // Process the file
             try (FileInputStream fis = new FileInputStream(file)) {
@@ -66,9 +66,9 @@ public class FileMonitoringService {
                       new File(processedDir, file.getName()).toPath(),
                       StandardCopyOption.REPLACE_EXISTING);
             
-            logger.info("Successfully processed file: " + file.getName());
+            logger.info("Archivo procesado exitosamente: " + file.getName());
         } catch (Exception e) {
-            logger.severe("Error processing file " + file.getName() + ": " + e.getMessage());
+            logger.severe("Error al procesar el archivo " + file.getName() + ": " + e.getMessage());
             
             // Move to error directory
             try {
@@ -79,7 +79,7 @@ public class FileMonitoringService {
                           new File(errorDir, file.getName()).toPath(),
                           StandardCopyOption.REPLACE_EXISTING);
             } catch (Exception moveError) {
-                logger.severe("Error moving failed file: " + moveError.getMessage());
+                logger.severe("Error al mover el archivo fallido: " + moveError.getMessage());
             }
         }
     }

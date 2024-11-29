@@ -126,7 +126,7 @@ public class ReceiptService {
 
     public Receipt createReceipt(Receipt receipt) {
         if (receiptRepository.existsByReceiptNumber(receipt.getReceiptNumber())) {
-            throw new RuntimeException("Receipt with this number already exists");
+            throw new RuntimeException("Ya existe el recibo con este número");
         }
         
         // Ensure date is set
@@ -141,13 +141,13 @@ public class ReceiptService {
     public Material addMaterial(Long receiptId, String code, Long qualityId, Long weightId,
                               Double grossWeight, Double netWeight, Double width, Double length) {
         Receipt receipt = receiptRepository.findById(receiptId)
-            .orElseThrow(() -> new RuntimeException("Receipt not found"));
+            .orElseThrow(() -> new RuntimeException("Recibo no encontrado"));
 
         Quality quality = qualityRepository.findById(qualityId)
-            .orElseThrow(() -> new RuntimeException("Quality not found"));
+            .orElseThrow(() -> new RuntimeException("Calidad no encontrado"));
 
         Weight weight = weightRepository.findById(weightId)
-            .orElseThrow(() -> new RuntimeException("Weight not found"));
+            .orElseThrow(() -> new RuntimeException("Gramaje no encontrado"));
 
         Material material = new Material();
         material.setCode(code);
@@ -167,7 +167,7 @@ public class ReceiptService {
 
     public void deleteReceipt(Long id) {
         Receipt receipt = receiptRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Receipt not found"));
+            .orElseThrow(() -> new RuntimeException("Recibo no encontrado"));
         receiptRepository.delete(receipt);
     }
 
@@ -185,7 +185,7 @@ public class ReceiptService {
 
     public Receipt updateReceipt(Receipt receipt) {
         if (!receiptRepository.existsById(receipt.getId())) {
-            throw new RuntimeException("Receipt not found");
+            throw new RuntimeException("Recibo no encontrado");
         }
         return receiptRepository.save(receipt);
     }

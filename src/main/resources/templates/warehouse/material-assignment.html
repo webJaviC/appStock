@@ -197,6 +197,14 @@
             </tr>
         </tbody>
     </table>
+    
+	<div th:if="${workOrder.status == T(com.printshop.model.WorkOrderStatus).ABIERTA}"
+		style="margin-top: 20px; text-align: right;">
+		<form th:action="@{/warehouse/work-orders/{id}/close(id=${workOrder.id})}" method="post"
+			style="display: inline-block;" onsubmit="return confirm('¿Está seguro de que desea cerrar esta orden de trabajo?')">
+			<button type="submit" class="btn btn-danger">Cerrar Hoja de Ruta</button>
+		</form>
+	</div>
 
     <script th:inline="javascript">
         /*<![CDATA[*/

@@ -259,7 +259,7 @@ public class ReceiptFileProcessor {
 
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
-                logger.info("Processing line " + lineNumber + ": " + line);
+                logger.info("Línea de procesamiento " + lineNumber + ": " + line);
                 
                 if (line.trim().isEmpty()) {
                     continue;
@@ -278,23 +278,23 @@ public class ReceiptFileProcessor {
                         }
                         receipt.addMaterial(material);
                         materials.add(material);
-                        logger.info("Added material: " + material.getCode());
+                        logger.info("Material añadido: " + material.getCode());
                     }
                 } catch (Exception e) {
-                    logger.severe("Error processing line " + lineNumber + ": " + e.getMessage());
-                    throw new IllegalArgumentException("Error in line " + lineNumber + ": " + e.getMessage());
+                    logger.severe("Error al procesar la linea " + lineNumber + ": " + e.getMessage());
+                    throw new IllegalArgumentException("Error en linea " + lineNumber + ": " + e.getMessage());
                 }
             }
 
             if (receipt == null) {
-                throw new IllegalArgumentException("No valid receipt data found");
+                throw new IllegalArgumentException("No se encontraron datos de recibo válidos");
             }
 
             if (materials.isEmpty()) {
-                throw new IllegalArgumentException("No valid materials found");
+                throw new IllegalArgumentException("No se encontraron materiales válidos");
             }
 
-            logger.info("Total materials processed: " + materials.size());
+            logger.info("Total de materiales procesados: " + materials.size());
             return receiptService.createReceipt(receipt);
         }
     }
@@ -302,7 +302,7 @@ public class ReceiptFileProcessor {
     private Receipt createReceipt(String line) {
         String receiptNumber = line.substring(145, 153).trim();
         if (receiptNumber.isEmpty()) {
-            throw new IllegalArgumentException("Empty receipt number");
+            throw new IllegalArgumentException("Número de recibo vacío");
         }
 
         Receipt receipt = new Receipt();
@@ -317,12 +317,12 @@ public class ReceiptFileProcessor {
     }
     private Receipt processReceiptHeader(String line) {
         if (line.length() < 170) {
-            throw new IllegalArgumentException("Invalid header line length");
+            throw new IllegalArgumentException("Longitud de línea de encabezado no válida");
         }
 
         String receiptNumber = line.substring(145, 153).trim();
         if (receiptNumber.isEmpty()) {
-            throw new IllegalArgumentException("Empty receipt number");
+            throw new IllegalArgumentException("Número de recibo vacío");
         }
 
         Receipt receipt = new Receipt();
@@ -338,13 +338,13 @@ public class ReceiptFileProcessor {
 
     private Material processMaterialLine(String line) {
         if (line.length() < 170) {
-        	 logger.warning("Skipping invalid line: insufficient length. Line length: " + line.length());
+        	 logger.warning("Omisión de línea no válida: longitud insuficiente. Longitud de línea: " + line.length());
              return null;
         }
 
         String code = line.substring(1, 11).trim();
         if (code.isEmpty()) {
-        	 logger.warning("Skipping line: empty material code");
+        	 logger.warning("Saltar línea: código de material vacío");
             return null;
         }
 
@@ -424,7 +424,7 @@ public class ReceiptFileProcessor {
 
     private LocalDate parseDate(String dateStr) {
         if (dateStr == null || dateStr.trim().isEmpty()) {
-            throw new IllegalArgumentException("Date cannot be empty");
+            throw new IllegalArgumentException("La fecha no puede estar vacía");
         }
 
         // Remove any non-digit characters and pad with zeros if needed
@@ -452,7 +452,7 @@ public class ReceiptFileProcessor {
             
             return LocalDate.parse(formattedDate, DATE_FORMATTER);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid date format: " + dateStr + ". Error: " + e.getMessage());
+            throw new IllegalArgumentException("Formato de fecha Invalido: " + dateStr + ". Error: " + e.getMessage());
         }
     }
     private double parseDouble(String value) {
