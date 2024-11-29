@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Assign Materials - Print Shop Inventory System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .details {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .details dt {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 10px;
+        }
+        .details dd {
+            margin-left: 0;
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+        .scanner-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #reader {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .scanner-options {
+            margin: 20px 0;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .table th {
+            background-color: #f8f9fa;
+            color: #2c3e50;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        #scannerStatus {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .input-field {
+            width: 100%;
+            max-width: 300px;
+            padding: 8px;
+            margin: 10px auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: block;
+        }
+        .assignment-input {
+            width: 100px;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="fragments/nav :: nav"></div>
+
+    <div class="details">
+        <h2>Detalle de Hoja de Ruta</h2>
+        <dl>
+            <dt>Nro Hoja de Ruta:</dt>
+            <dd th:text="${workOrder.routeNumber}"></dd>
+            <dt>Cod. Cliente:</dt>
+            <dd th:text="${workOrder.customerNumber}"></dd>
+            <dt>Cod. Producto:</dt>
+            <dd th:text="${workOrder.productNumber}"></dd>
+            <dt>Kg Requeridos:</dt>
+            <dd th:text="${workOrder.requiredWeight + ' kg'}"></dd>
+            <dt>Descripción:</dt>
+            <dd th:text="${workOrder.description}"></dd>
+            <dt>Gramaje:</dt>
+            <dd th:text="${workOrder.weight}"></dd>
+            <dt>Proveedor:</dt>
+            <dd th:text="${workOrder.proveedor}"></dd>
+            <dt>Dimensiones:</dt>
+            <td th:text="${workOrder.width + ' x ' + workOrder.length}"></td>
+            <dt>Observaciones:</dt>
+            <dd th:text="${workOrder.observaciones}"></dd>
+        </dl>
+    </div>
+
+    <div class="scanner-container">
+        <h3>Scan Material</h3>
+        <div class="scanner-options">
+            <button class="btn btn-primary" onclick="startScanner()">Usar Camara</button>
+            <button class="btn btn-primary" onclick="focusManualInput()">Ingreso Manual</button>
+        </div>
+        <div id="reader" style="display: none;"></div>
+        <input type="text" id="barcodeInput" class="input-field" 
+               placeholder="Scan or enter material code" 
+               onkeypress="handleBarcodeInput(event)">
+        <div id="scannerStatus"></div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Cod. Material</th>
+                <th>Calidad</th>
+                <th>Gramaje</th>
+                <th>KG Netos (kg)</th>
+                <th>Orden #</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="assignment : ${workOrder.materialAssignments}">
+                <td th:text="${assignment.material.code}"></td>
+                <td th:text="${assignment.material.quality.name}"></td>
+                <td th:text="${assignment.material.weight.name}"></td>
+                <td>
+                    <input th:if="${!assignment.ordered}" type="number" 
+                           th:id="'netWeight-' + ${assignment.id}"
+                           th:value="${assignment.updatedNetWeight}"
+                           step="0.01" class="assignment-input">
+                    <span th:if="${assignment.ordered}" 
+                          th:text="${assignment.updatedNetWeight}"></span>
+                </td>
+                <td>
+                    <input th:if="${!assignment.ordered}" type="number" 
+                           th:id="'orderNumber-' + ${assignment.id}"
+                           th:value="${assignment.orderNumber}"
+                           class="assignment-input">
+                    <span th:if="${assignment.ordered}" 
+                          th:text="${assignment.orderNumber}"></span>
+                </td>
+                <td>
+                    <button th:if="${!assignment.ordered}" class="btn btn-primary"
+                            th:onclick="'saveAssignment(' + ${assignment.id} + ')'">
+                        Guardar
+                    </button>
+                    <button th:if="${!assignment.ordered}" class="btn btn-danger"
+                            th:onclick="'removeAssignment(' + ${assignment.id} + ')'">
+                        Remover
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const workOrderId = /*[[${workOrder.id}]]*/ null;
+        let html5QrcodeScanner = null;
+
+        function startScanner() {
+            const reader = document.getElementById('reader');
+            reader.style.display = 'block';
+            document.getElementById('barcodeInput').style.display = 'none';
+
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+            }
+
+            html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader",
+                { fps: 10, qrbox: { width: 250, height: 250 } }
+            );
+
+            html5QrcodeScanner.render((decodedText) => {
+                processScannedCode(decodedText);
+                html5QrcodeScanner.clear();
+                reader.style.display = 'none';
+                document.getElementById('barcodeInput').style.display = 'block';
+            });
+        }
+
+        function focusManualInput() {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+                document.getElementById('reader').style.display = 'none';
+            }
+            document.getElementById('barcodeInput').style.display = 'block';
+            document.getElementById('barcodeInput').focus();
+        }
+
+        function showStatus(message, isError = false) {
+            const statusDiv = document.getElementById('scannerStatus');
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
+            statusDiv.className = isError ? 'status-error' : 'status-success';
+            setTimeout(() => statusDiv.style.display = 'none', 3000);
+        }
+
+        async function processScannedCode(code) {
+            if (!code?.trim()) return;
+
+            try {
+                const response = await fetch(`/warehouse/material-assignment/${workOrderId}/assign`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': 'application/json'
+                    },
+                    body: `materialCode=${encodeURIComponent(code.trim())}`
+                });
+
+                const data = await response.json();
+                showStatus(data.message, !data.success);
+
+                if (data.success) {
+                    location.reload();
+                }
+
+                document.getElementById('barcodeInput').value = '';
+            } catch (error) {
+                showStatus('Error al procesar la asignación', true);
+                console.error('Error:', error);
+            }
+        }
+
+        function handleBarcodeInput(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                processScannedCode(document.getElementById('barcodeInput').value);
+            }
+        }
+
+        async function saveAssignment(assignmentId) {
+            const orderNumber = document.getElementById(`orderNumber-${assignmentId}`).value;
+            const netWeight = document.getElementById(`netWeight-${assignmentId}`).value;
+
+            try {
+                const response = await fetch(`/warehouse/material-assignment/assignments/${assignmentId}/update`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': 'application/json'
+                    },
+                    body: `orderNumber=${orderNumber}&updatedNetWeight=${netWeight}`
+                });
+
+                const data = await response.json();
+                showStatus(data.message, !data.success);
+                if (data.success) {
+                    location.reload();
+                }
+            } catch (error) {
+                showStatus('Error al actualizar la asignación', true);
+                console.error('Error:', error);
+            }
+        }
+
+        async function removeAssignment(assignmentId) {
+            if (!confirm('¿Estás seguro de que deseas eliminar este material?')) return;
+
+            try {
+                const response = await fetch(`/warehouse/material-assignment/assignments/${assignmentId}`, {
+                    method: 'DELETE',
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                const data = await response.json();
+                showStatus(data.message, !data.success);
+                if (data.success) {
+                    location.reload();
+                }
+            } catch (error) {
+                showStatus('Error al eliminar la asignación', true);
+                console.error('Error:', error);
+            }
+        }
+
+        // Handle physical barcode scanner
+        let barcodeBuffer = '';
+        let lastKeyTime = 0;
+        const BARCODE_DELAY = 20;
+
+        document.addEventListener('keypress', (e) => {
+            const currentTime = new Date().getTime();
+            
+            if (currentTime - lastKeyTime > BARCODE_DELAY) {
+                barcodeBuffer = '';
+            }
+            
+            if (e.key !== 'Enter') {
+                barcodeBuffer += e.key;
+            } else if (barcodeBuffer) {
+                processScannedCode(barcodeBuffer);
+                barcodeBuffer = '';
+            }
+            
+            lastKeyTime = currentTime;
+        });
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('barcodeInput').focus();
+        });
+
+        // Clean up when leaving page
+        window.addEventListener('beforeunload', () => {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear();
+            }
+        });
+        /*]]>*/
+    </script>
+</body>
+</html>

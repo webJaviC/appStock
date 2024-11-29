@@ -265,9 +265,10 @@
 				const data = await response.json();
 				showStatus(data.message, !data.success);
 				if (data.success) {
-					setTimeout(() => location.reload(), 1000);
+					 window.location.reload(); // Recargar la página después de éxito
 				}
 			} catch (error) {
+				
 				showStatus('Error processing material: ' + error.message, true);
 				console.error('Error:', error);
 			}
@@ -325,7 +326,7 @@
 				const data = await response.json();
 				showStatus(data.message, !data.success);
 				if (data.success) {
-					setTimeout(() => location.reload(), 1000);
+					 window.location.reload(); // Recargar la página después de éxito
 				}
 			} catch (error) {
 				showStatus('Error removing assignment: ' + error.message, true);

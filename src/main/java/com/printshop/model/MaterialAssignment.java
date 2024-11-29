@@ -3,11 +3,18 @@ package com.printshop.model;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
 import lombok.Data;
 
+
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @Entity
 @Table(name = "material_assignments")
@@ -15,19 +22,26 @@ public class MaterialAssignment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
 
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "work_order_id", nullable = false)
     private WorkOrder workOrder;
-
+    
+    
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "material_id", nullable = false)
     private Material material;
 
     private Integer orderNumber;
     private Double updatedNetWeight;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime assignmentDate;
+    
+    
     private boolean ordered = false;
     
     @Column(name = "status")

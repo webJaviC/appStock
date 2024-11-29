@@ -62,6 +62,37 @@ public class WarehouseController {
         }
     }*/
     
+  /*  @PostMapping("/work-orders/{workOrderId}/reserve-material")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> reserveMaterial(
+            @PathVariable Long workOrderId,
+            @RequestParam String materialCode) {
+        Map<String, Object> response = new HashMap<>();
+        
+        if (materialCode == null || materialCode.trim().isEmpty()) {
+            response.put("success", false);
+            response.put("message", "El código de material no puede estar vacío");
+            return ResponseEntity.badRequest().body(response); // 400 Bad Request
+        }
+        
+        try {
+            MaterialAssignment assignment = workOrderService.reserveMaterial(workOrderId, materialCode);
+            response.put("success", true);
+            response.put("message", "Material reservado con éxito");
+            response.put("assignment", assignment);
+            return ResponseEntity.ok(response);
+        } catch (IllegalStateException e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response); // 409 Conflict
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Error al reservar el material: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    */
+    
     @PostMapping("/work-orders/{workOrderId}/reserve-material")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> reserveMaterial(
@@ -74,7 +105,7 @@ public class WarehouseController {
             response.put("message", "Material reservado con éxito");
             response.put("assignment", assignment);
             return ResponseEntity.ok(response);
-        } catch (IllegalStateException e) {
+       } catch (IllegalStateException e) {
             response.put("success", false);
             response.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(response); // 409 Conflict

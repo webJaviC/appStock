@@ -17,18 +17,27 @@ public class SecurityConfig {
 	@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-        .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/warehouse/work-orders/*/reserve-material")
-                .ignoringRequestMatchers("/warehouse/assignments/**")
-            )
-            .authorizeHttpRequests(auth -> auth
+        //.csrf(csrf -> csrf
+               // .ignoringRequestMatchers("/warehouse/work-orders/*/reserve-material")
+                //.ignoringRequestMatchers("/warehouse/assignments/**")
+        		
+        		.csrf(AbstractHttpConfigurer::disable)
+          /*  .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/production/**").hasAnyRole("ADMIN", "PRODUCTION")
                 .requestMatchers("/warehouse/**", "/api/warehouse/**").hasAnyRole("ADMIN", "WAREHOUSE")
                 .requestMatchers("/inventory/**").hasAnyRole("ADMIN", "PRODUCTION", "WAREHOUSE")
                 .anyRequest().authenticated()
-            )
+            )*/
+        		.authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/production/**").hasAnyRole("ADMIN", "PRODUCTION")
+                        .requestMatchers("/warehouse/**", "/warehouse/material-assignment/**").hasAnyRole("ADMIN", "WAREHOUSE")
+                        .requestMatchers("/inventory/**").hasAnyRole("ADMIN", "PRODUCTION", "WAREHOUSE")
+                        .anyRequest().authenticated()
+                    )
             .formLogin(form -> form
                 .loginPage("/login")
                 .successHandler(customAuthenticationSuccessHandler())

@@ -93,7 +93,7 @@
 					th:text="${workOrder.status}"></td>
 				<td>
 					<a th:if="${workOrder.status == T(com.printshop.model.WorkOrderStatus).ABIERTA}"
-						th:href="@{/warehouse/work-orders/{id}(id=${workOrder.id})}" class="btn">Asignar Material</a>
+					th:href="@{/warehouse/material-assignment/{id}(id=${workOrder.id})}" class="btn">Asignar Material</a>
 				</td>
 			</tr>
 		</tbody>

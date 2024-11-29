@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Data
 @Entity
 @Table(name = "work_orders")
@@ -42,7 +44,7 @@ public class WorkOrder {
     private WorkOrderStatus status = WorkOrderStatus.ABIERTA;
     
     
-
+    @JsonBackReference
     @OneToMany(mappedBy = "workOrder")
     private Set<MaterialAssignment> materialAssignments;
     

@@ -2,6 +2,7 @@ com\printshop\controller\WorkOrderController.class
 com\printshop\service\InventoryUpdateService$1.class
 com\printshop\service\ReceiptService.class
 com\printshop\repository\UserRepository.class
+WarehouseInventoryController.class
 com\printshop\controller\InventoryController.class
 com\printshop\controller\ReceiptController.class
 com\printshop\dto\MaterialScanResponse.class
@@ -9,6 +10,7 @@ com\printshop\config\AdminInitializer.class
 com\printshop\controller\WarehouseController.class
 com\printshop\repository\MaterialAssignmentRepository.class
 com\printshop\controller\UsedMaterialController.class
+com\printshop\controller\MaterialAssignmentController.class
 com\printshop\repository\MaterialRepository.class
 com\printshop\config\CustomAuthenticationSuccessHandler.class
 com\printshop\model\Receipt.class
